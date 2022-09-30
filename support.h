@@ -371,6 +371,7 @@ void endCall() {
 void checkForIncomingCall() {
    if( settings.listenPort && serverHasClient(&tcpServer) ) {
       if( state != CMD_NOT_IN_CALL || (!settings.autoAnswer && ringCount > MAGIC_ANSWER_RINGS) ) {
+         gpio_put(RI, !ACTIVE);
          TCP_CLIENT_T *droppedClient = serverGetClient(&tcpServer, &tcpDroppedClient);
          if( settings.busyMsg[0] ) {
             tcpWriteStr(droppedClient, settings.busyMsg);
@@ -382,7 +383,6 @@ void checkForIncomingCall() {
          tcpWriteStr(droppedClient, "\r\n\r\n");
          tcpTxFlush(droppedClient);
          tcpClientClose(droppedClient);
-         gpio_put(RI, !ACTIVE);
          ringCount = 0;
          ringing = false;
       } else if( !settings.autoAnswer || ringCount < settings.autoAnswer ) {

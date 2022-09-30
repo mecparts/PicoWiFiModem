@@ -278,7 +278,7 @@ uint16_t tcpWriteByte(TCP_CLIENT_T *client, uint8_t c) {
 }
 
 uint16_t tcpBytesAvailable(TCP_CLIENT_T *client) {
-   if( client && client->pcb && client->pcb->callback_arg ) {
+   if( client ) {
       return client->rxBuffLen;
    }
    return 0;
