@@ -303,7 +303,7 @@ uint16_t tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
          } else {
             tight_loop_contents();
          }
-      } while( rqstTimeout <= 0 || timeout > millis() );
+      } while( timeout > millis() );
    }
    return -1;
 }

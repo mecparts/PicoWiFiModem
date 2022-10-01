@@ -137,7 +137,7 @@ int receiveTcpData() {
    ++bytesIn;
 
    if( sessionTelnetType != NO_TELNET && rxByte == IAC ) {
-      rxByte = tcpReadByte(tcpClient);
+      rxByte = tcpReadByte(tcpClient, 1000);
       ++bytesIn;
       if( rxByte != IAC ) { // 2 times 0xff is just an escaped real 0xff
          // rxByte has now the first byte of the actual non-escaped control code
@@ -145,7 +145,7 @@ int receiveTcpData() {
          printf("[%u,", rxByte);
 #endif
          uint8_t cmdByte1 = rxByte;
-         rxByte = tcpReadByte(tcpClient);
+         rxByte = tcpReadByte(tcpClient, 1000);
          ++bytesIn;
          uint8_t cmdByte2 = rxByte;
 #if DEBUG
@@ -219,7 +219,7 @@ int receiveTcpData() {
                switch( cmdByte2 ) {
                   case TTYPE:
                   case TSPEED:
-                     while( tcpReadByte(tcpClient) != SE ) { // discard rest of cmd
+                     while( tcpReadByte(tcpClient, 10) != SE ) { // discard rest of cmd
                         ++bytesIn;
                      }
                      ++bytesIn;
