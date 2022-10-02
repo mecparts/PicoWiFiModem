@@ -82,8 +82,9 @@ void sendSerialData() {
    if( escCount || (millis() - lastSerialData >= GUARD_TIME) ) {
       // check for the online escape sequence
       // +++ with a 1 second pause before and after
+      // if escape character is >= 128, it's ignored
       for( size_t i = 0; i < len; ++i ) {
-         if( txBuf[i] == settings.escChar ) {
+         if( txBuf[i] == settings.escChar && settings.escChar < 128 ) {
             if( ++escCount == ESC_COUNT ) {
                guardTime = millis() + GUARD_TIME;
             } else {
@@ -562,7 +563,7 @@ void displayCurrentSettings(void) {
    printf("mDNS name..: %s.local\r\n", settings.mdnsName);
    printf("Server port: %u\r\n", settings.listenPort);
    printf("Busy msg...: %s\r\n", settings.busyMsg);
-   printf("E%u Q%u V%u X%u &D%u &K%u NET%u S0=%u\r\n",
+   printf("E%u Q%u V%u X%u &D%u &K%u NET%u S0=%u S2=%u\r\n",
       settings.echo,
       settings.quiet,
       settings.verbose,
@@ -570,7 +571,8 @@ void displayCurrentSettings(void) {
       settings.dtrHandling,
       settings.rtsCts,
       settings.telnet,
-      settings.autoAnswer);
+      settings.autoAnswer,
+      settings.escChar);
 
    printf("Speed dial:\r\n");
    for( int i = 0; i < SPEED_DIAL_SLOTS; ++i ) {
@@ -595,7 +597,7 @@ void displayStoredSettings(void) {
    printf("mDNS name..: %s.local\r\n", temp.mdnsName);
    printf("Server port: %u\r\n", temp.listenPort);
    printf("Busy Msg...: %s\r\n", temp.busyMsg);
-   printf("E%u Q%u V%u X%u &D%u &K%u NET%u S0=%u\r\n",
+   printf("E%u Q%u V%u X%u &D%u &K%u NET%u S0=%u S2=%u\r\n",
       temp.echo, 
       temp.quiet,
       temp.verbose,
@@ -603,7 +605,8 @@ void displayStoredSettings(void) {
       temp.dtrHandling,
       temp.rtsCts,
       temp.telnet,
-      temp.autoAnswer);
+      temp.autoAnswer,
+      temp.escChar);
 
    printf("Speed dial:\r\n");
    for (int i = 0; i < SPEED_DIAL_SLOTS; i++) {

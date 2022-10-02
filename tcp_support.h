@@ -284,8 +284,8 @@ uint16_t tcpBytesAvailable(TCP_CLIENT_T *client) {
    return 0;
 }
 
-uint16_t tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
-   uint8_t c;
+int tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
+   int c;
    uint32_t timeout = 0;
    
    if( client ) {
