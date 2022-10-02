@@ -15,6 +15,7 @@ char *answerCall(char *atCmd) {
    connectTime = millis();
    sendResult(R_CONNECT);
    gpio_put(DCD, ACTIVE); // we've got a carrier signal
+   amClient = false;
    state = ONLINE;
    uart_tx_wait_blocking(uart0); // drain the UART's Tx FIFO
    return atCmd;
@@ -53,7 +54,7 @@ char *wifiConnection(char *atCmd) {
             for( int i = 0; i < 50; ++i ) {
                sleep_ms(500);
                if( !settings.quiet && settings.extendedCodes ) {
-                  putchar('.');
+                  uart_putc(uart0, '.');
                }
                if( cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA) == CYW43_LINK_UP ) {
                   break;
@@ -178,6 +179,7 @@ char *dialNumber(char *atCmd) {
          sendResult(R_CONNECT);
          gpio_put(DCD, ACTIVE);
          state = ONLINE;
+         amClient = true;
       } else {
          sendResult(R_NO_CARRIER);
          gpio_put(DCD, !ACTIVE);
@@ -265,6 +267,7 @@ char *httpGet(char *atCmd) {
       connectTime = millis();
       sendResult(R_CONNECT);
       gpio_put(DCD, ACTIVE);
+      amClient = true;
       state = ONLINE;
 
       // Send a HTTP request before continuing the connection as usual

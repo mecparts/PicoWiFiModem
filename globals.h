@@ -49,13 +49,14 @@
       bool connectFinished;
       bool sending;
       uint8_t rxBuff[TCP_CLIENT_RX_BUF_SIZE];
-      volatile int rxBuffLen;
-      int rxBuffHead;
-      volatile int rxBuffTail;
+      volatile uint16_t rxBuffLen;
+      uint16_t rxBuffHead;
+      volatile uint16_t rxBuffTail;
+      volatile uint16_t totLen;
       uint8_t txBuff[TCP_CLIENT_TX_BUF_SIZE];
-      volatile int txBuffLen;
-      volatile int txBuffHead;
-      int txBuffTail;
+      volatile uint16_t txBuffLen;
+      volatile uint16_t txBuffHead;
+      uint16_t txBuffTail;
    } TCP_CLIENT_T;
    
    typedef struct TCP_SERVER_T_ {
@@ -84,4 +85,5 @@
    uint8_t  txBuf[TX_BUF_SIZE];  // Transmit Buffer
    uint8_t  sessionTelnetType;
    volatile bool dtrWentInactive = false;
+   bool     amClient = false;    // true if we've connected TO a remote server
 #endif

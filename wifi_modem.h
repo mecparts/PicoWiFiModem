@@ -56,6 +56,9 @@
    #define ECHO      ((uint8_t)1)
    #define SUP_GA    ((uint8_t)3)
    #define SE        ((uint8_t)240)
+   #define DM        ((uint8_t)242)
+   #define BRK       ((uint8_t)243)
+   #define AYT       ((uint8_t)246)
    #define SB        ((uint8_t)250)
    #define WILL      ((uint8_t)251)
    #define WONT      ((uint8_t)252)
@@ -87,7 +90,7 @@
    #define I2C_SCL   17
    #define I2C_BAUD  100000
    
-   #define TCP_CLIENT_RX_BUF_SIZE 5000
+   #define TCP_CLIENT_RX_BUF_SIZE 20000
    #define TCP_CLIENT_TX_BUF_SIZE 500
 
 #endif

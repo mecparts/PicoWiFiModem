@@ -243,16 +243,16 @@ char *doDataConfig(char *atCmd) {
          printf("%u", settings.dataBits);
          switch( settings.parity ) {
             case UART_PARITY_NONE:
-               putchar('N');
+               uart_putc(uart0, 'N');
                break;
             case UART_PARITY_ODD:
-               putchar('O');
+               uart_putc(uart0, 'O');
                break;
             case UART_PARITY_EVEN:
-               putchar('E');
+               uart_putc(uart0, 'E');
                break;
             default:
-               putchar('?');
+               uart_putc(uart0, '?');
                break;
          }
          printf("%u\r\n", settings.stopBits);

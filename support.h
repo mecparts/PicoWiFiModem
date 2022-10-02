@@ -140,17 +140,29 @@ int receiveTcpData() {
    if( sessionTelnetType != NO_TELNET && rxByte == IAC ) {
       rxByte = tcpReadByte(tcpClient, 1000);
       ++bytesIn;
-      if( rxByte != IAC ) { // 2 times 0xff is just an escaped real 0xff
+      if( rxByte == DM ) { // ignore data marks
+         rxByte = -1;
+      } else if( rxByte == BRK ) { // break?
+         uart_set_break(uart0, true);
+         sleep_ms(300);
+         uart_set_break(uart0, false);
+         rxByte = -1;
+      } else if( rxByte == AYT ) { // are you there?
+         bytesOut += tcpWriteStr(tcpClient, "\r\n[Yes]\r\n");
+         rxByte = -1;
+      } else if( rxByte != IAC ) { // 2 times 0xff is just an escaped real 0xff
          // rxByte has now the first byte of the actual non-escaped control code
-#if DEBUG
+#if IAC_DEBUG
          printf("[%u,", rxByte);
 #endif
          uint8_t cmdByte1 = rxByte;
-         rxByte = tcpReadByte(tcpClient, 1000);
-         ++bytesIn;
+         if( cmdByte1 == DO || cmdByte1 == DONT || cmdByte1 == WILL || cmdByte1 == WONT || cmdByte1 == SB ) {
+            rxByte = tcpReadByte(tcpClient, 1000);
+            ++bytesIn;
+         }
          uint8_t cmdByte2 = rxByte;
-#if DEBUG
-         putchar(rxByte);
+#if IAC_DEBUG
+         printf("%u",rxByte);
 #endif
          txLen = 0;
          switch( cmdByte1 ) {
@@ -161,10 +173,16 @@ int receiveTcpData() {
                   case SUP_GA:
                   case TTYPE:
                   case TSPEED:
-                     txBuf[txLen++] = IAC;
-                     txBuf[txLen++] = WILL;
-                     txBuf[txLen++] = cmdByte2;
-                     bytesOut += tcpWriteBuf(tcpClient, txBuf, txLen);
+                     if( amClient || (cmdByte2 != SUP_GA && cmdByte2 != ECHO) ) {
+                        // in a server connection, we've already sent out
+                        // WILL SUP_GA and WILL ECHO so we shouldn't again
+                        // to prevent an endless round robin of WILLs and
+                        // DOs SUP_GA/ECHO echoing back and forth
+                        txBuf[txLen++] = IAC;
+                        txBuf[txLen++] = WILL;
+                        txBuf[txLen++] = cmdByte2;
+                        bytesOut += tcpWriteBuf(tcpClient, txBuf, txLen);
+                     }
                      break;
                   case LOC:
                   case NAWS:
@@ -214,16 +232,18 @@ int receiveTcpData() {
                      break;
                }
                txBuf[txLen++] = cmdByte2;
-               bytesOut += tcpWriteBuf(tcpClient, txBuf, txLen++);
+               bytesOut += tcpWriteBuf(tcpClient, txBuf, txLen);
                break;
             case SB:
                switch( cmdByte2 ) {
                   case TTYPE:
                   case TSPEED:
-                     while( tcpReadByte(tcpClient, 10) != SE ) { // discard rest of cmd
-                        ++bytesIn;
-                     }
-                     ++bytesIn;
+                     do {
+                        rxByte = tcpReadByte(tcpClient, 10);
+                        if( rxByte != -1 ) {
+                           ++bytesIn;
+                        }
+                     } while( rxByte != SE ); // discard rest of cmd
                      txBuf[txLen++] = IAC;
                      txBuf[txLen++] = SB;
                      txBuf[txLen++] = cmdByte2;
@@ -247,8 +267,8 @@ int receiveTcpData() {
          }
          rxByte = -1;
       }
-#if DEBUG
-      putchar(']');
+#if IAC_DEBUG
+      printf("]");
 #endif
    }
    // Telnet sends <CR> as <CR><NUL>
@@ -424,6 +444,7 @@ void checkForIncomingCall() {
          } else {
             sleep_ms(1000);
             state = ONLINE;
+            amClient = false;
             sendResult(R_CONNECT);
          }
          connectTime = millis();
@@ -637,6 +658,7 @@ void inPasswordMode() {
                tcpWriteStr(tcpClient, "\r\nPassword: ");
             } else {
                state = ONLINE;
+               amClient = false;;
                sendResult(R_CONNECT);
                tcpWriteStr(tcpClient,"Welcome\r\n");
             }

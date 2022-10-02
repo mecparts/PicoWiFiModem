@@ -81,7 +81,7 @@ err_t tcpSend(TCP_CLIENT_T *client) {
    }
    uint8_t tmp[maxLen];
    if( tmp ) {
-      for( int i=0; i<maxLen; ++i ) {
+      for( int i = 0; i < maxLen; ++i ) {
          tmp[i] = client->txBuff[client->txBuffHead++];
          if( client->txBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
             client->txBuffHead = 0;
@@ -120,8 +120,8 @@ err_t tcpRecv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
       return tcpClientClose(client);
    }
    if( p->tot_len > 0 && client ) {
-      for( struct pbuf *q = p; q && client->rxBuffLen < TCP_CLIENT_RX_BUF_SIZE; q = q->next ) {
-         for( int i=0; i<q->len && client->rxBuffLen < TCP_CLIENT_RX_BUF_SIZE; ++i ) {
+      for( struct pbuf *q = p; q; q = q->next ) {
+         for( int i = 0; i < q->len; ++i ) {
             client->rxBuff[client->rxBuffTail++] = ((uint8_t *)q->payload)[i];
             if( client->rxBuffTail == TCP_CLIENT_RX_BUF_SIZE ) {
                client->rxBuffTail = 0;
@@ -129,10 +129,16 @@ err_t tcpRecv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
             ++client->rxBuffLen;
          }
       }
+      if( client->rxBuffLen > TCP_CLIENT_RX_BUF_SIZE ) {
+         printf("\a{OVFL}\a");
+      }
+      if( client->rxBuffLen < 1460 ) {
+         tcp_recved(client->pcb, p->tot_len);
+      } else {
+         client->totLen += p->tot_len;
+         //###printf("[%u,%u]", client->totLen, p->tot_len);
+      }
    }
-   cyw43_arch_lwip_begin();
-   tcp_recved(tpcb, p->tot_len);
-   cyw43_arch_lwip_end();
    pbuf_free(p);
    return ERR_OK;
 }
@@ -166,6 +172,7 @@ TCP_CLIENT_T *tcpConnect(TCP_CLIENT_T *client, const char *host, int portNum) {
    client->rxBuffLen = 0;
    client->rxBuffHead = 0;
    client->rxBuffTail = 0;
+   client->totLen = 0;
 
    client->txBuffLen = 0;
    client->txBuffHead = 0;
@@ -251,7 +258,7 @@ bool tcpServerStart(TCP_SERVER_T *server, int portNum) {
 uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
    if( client && client->pcb && client->pcb->callback_arg) {
 
-      for( uint16_t i=0; i<len; ++i ) {
+      for( uint16_t i = 0; i < len; ++i ) {
          while( client->txBuffLen >= TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
             tight_loop_contents();
          }
@@ -298,7 +305,13 @@ int tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
             if( client->rxBuffHead == TCP_CLIENT_RX_BUF_SIZE ) {
                client->rxBuffHead = 0;
             }
-            client->rxBuffLen--;
+            if( !--client->rxBuffLen && client->totLen && client->pcb) {
+               //###printf("<%u>", client->totLen);
+               cyw43_arch_lwip_begin();
+               tcp_recved(client->pcb, client->totLen);
+               client->totLen = 0;
+               cyw43_arch_lwip_end();
+            }
             return c;
          } else {
             tight_loop_contents();
@@ -352,6 +365,7 @@ TCP_CLIENT_T *serverGetClient(TCP_SERVER_T *server, TCP_CLIENT_T *client) {
    client->rxBuffLen = 0;
    client->rxBuffHead = 0;
    client->rxBuffTail = 0;
+   client->totLen = 0;
 
    client->txBuffLen = 0;
    client->txBuffHead = 0;
