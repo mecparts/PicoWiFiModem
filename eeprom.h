@@ -1,3 +1,8 @@
+//
+// External EEPROM routines
+//
+// I2C_xxx constants defined in wifi_modem.h
+//
 void initEEPROM(void) {
    i2c_init(i2c0, I2C_BAUD);
    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);

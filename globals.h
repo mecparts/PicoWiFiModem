@@ -47,7 +47,7 @@
       ip_addr_t remoteAddr;
       bool connected;
       bool connectFinished;
-      bool sending;
+      volatile bool sending;
       uint8_t rxBuff[TCP_CLIENT_RX_BUF_SIZE];
       volatile uint16_t rxBuffLen;
       uint16_t rxBuffHead;
@@ -86,4 +86,10 @@
    uint8_t  sessionTelnetType;
    volatile bool dtrWentInactive = false;
    bool     amClient = false;    // true if we've connected TO a remote server
+#ifndef NDEBUG
+   uint16_t maxTotLen = 0;
+   uint16_t maxRxBuffLen = 0;
+   uint16_t maxTxBuffLen = 0;
+#endif
+
 #endif

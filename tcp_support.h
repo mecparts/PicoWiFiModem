@@ -1,6 +1,9 @@
-volatile bool dnsLookupFinished = false;
+//
+// lwIP interface functions
+//
+static volatile bool dnsLookupFinished = false;
 
-void dnsLookupDone(const char *name, const ip_addr_t *ipaddr, void *arg) {
+static void dnsLookupDone(const char *name, const ip_addr_t *ipaddr, void *arg) {
    ip_addr_t *resolved = (ip_addr_t *)arg;
    if( ipaddr && ipaddr->addr) {
       resolved->addr = ipaddr->addr;
@@ -63,7 +66,7 @@ err_t tcpClientClose(TCP_CLIENT_T *client) {
 }
 
 // NB: the PCB may have already been freed when this function is called
-void tcpClientErr(void *arg, err_t err) {
+static void tcpClientErr(void *arg, err_t err) {
    TCP_CLIENT_T *client = (TCP_CLIENT_T *)arg;
 
    if( client ) {
@@ -73,35 +76,35 @@ void tcpClientErr(void *arg, err_t err) {
    }
 }
 
-err_t tcpSend(TCP_CLIENT_T *client) {
+static err_t tcpSend(TCP_CLIENT_T *client) {
    err_t err = ERR_OK;
    int maxLen = tcp_sndbuf(client->pcb);
    if( client->txBuffLen < maxLen ) {
       maxLen = client->txBuffLen;
    }
    uint8_t tmp[maxLen];
-   if( tmp ) {
-      for( int i = 0; i < maxLen; ++i ) {
-         tmp[i] = client->txBuff[client->txBuffHead++];
-         if( client->txBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
-            client->txBuffHead = 0;
-         }
-         --client->txBuffLen;
+   for( int i = 0; i < maxLen; ++i ) {
+      tmp[i] = client->txBuff[client->txBuffHead++];
+      if( client->txBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
+         client->txBuffHead = 0;
       }
-      client->sending = true;
-      cyw43_arch_lwip_begin();
-      err = tcp_write(client->pcb, tmp, maxLen, TCP_WRITE_FLAG_COPY);
-      client->sending = err == ERR_OK;
-      tcp_output(client->pcb);
-      cyw43_arch_lwip_end();
-      if( err != ERR_OK ) {
-         printf("{%d}",err);
-      }
+      --client->txBuffLen;
    }
+   client->sending = true;
+   cyw43_arch_lwip_begin();
+   err = tcp_write(client->pcb, tmp, maxLen, TCP_WRITE_FLAG_COPY);
+   client->sending = err == ERR_OK;
+   tcp_output(client->pcb);
+   cyw43_arch_lwip_end();
+#ifndef NDEBUG
+   if( err != ERR_OK ) {
+      gpio_put(TCP_WRITE_ERR, HIGH);
+   }
+#endif
    return err;
 }
 
-err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
+static err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
    TCP_CLIENT_T *client = (TCP_CLIENT_T *)arg;
    err_t err = ERR_OK;
    
@@ -113,7 +116,7 @@ err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
    return err;
 }
 
-err_t tcpRecv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
+static err_t tcpRecv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
    TCP_CLIENT_T *client = (TCP_CLIENT_T *)arg;
 
    if( !p ) {
@@ -129,21 +132,30 @@ err_t tcpRecv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
             ++client->rxBuffLen;
          }
       }
+#ifndef NDEBUG
       if( client->rxBuffLen > TCP_CLIENT_RX_BUF_SIZE ) {
-         printf("\a{OVFL}\a");
+         gpio_put(RXBUFF_OVFL, HIGH);
       }
-      if( client->rxBuffLen < 1460 ) {
+      if( client->rxBuffLen > maxRxBuffLen ) {
+         maxRxBuffLen = client->rxBuffLen;
+      }
+#endif
+      if( client->rxBuffLen <= TCP_MSS ) {
          tcp_recved(client->pcb, p->tot_len);
       } else {
          client->totLen += p->tot_len;
-         //###printf("[%u,%u]", client->totLen, p->tot_len);
+#ifndef NDEBUG
+         if( client->totLen > maxTotLen ) {
+            maxTotLen = client->totLen;
+         }
+#endif
       }
    }
    pbuf_free(p);
    return ERR_OK;
 }
 
-err_t tcpHasConnected(void *arg, struct tcp_pcb *tpcb, err_t err) {
+static err_t tcpHasConnected(void *arg, struct tcp_pcb *tpcb, err_t err) {
    TCP_CLIENT_T *client = (TCP_CLIENT_T*)arg;
    
    client->connectFinished = true;
@@ -202,7 +214,7 @@ TCP_CLIENT_T *tcpConnect(TCP_CLIENT_T *client, const char *host, int portNum) {
 }
 
 // NB: the PCB may have already been freed when this function is called
-void tcpServerErr(void *arg, err_t err) {
+static void tcpServerErr(void *arg, err_t err) {
    TCP_SERVER_T *server = (TCP_SERVER_T *)arg;
 
    if( server ) {
@@ -211,16 +223,17 @@ void tcpServerErr(void *arg, err_t err) {
    }
 }
 
-err_t tcpServerAccept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
+static err_t tcpServerAccept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
    TCP_SERVER_T *server = (TCP_SERVER_T*)arg;
 
    if( err != ERR_OK || !clientPcb ) {
-      printf("Failure in accept: %d\n",err);
+      printf("Failure in accept: %d\n",err); //###
+      server->clientPcb = NULL;
       tcp_close(server->pcb);
       return ERR_VAL;
    }
    if( server->clientPcb ) {
-      printf("Overwriting server->clientPcb\n");
+      printf("Overwriting server->clientPcb\n");   //###
    }
    server->clientPcb = clientPcb;
    return ERR_OK;
@@ -250,7 +263,7 @@ bool tcpServerStart(TCP_SERVER_T *server, int portNum) {
 
    tcp_arg(   server->pcb, server);
    tcp_accept(server->pcb, tcpServerAccept);
-   tcp_err(   server->pcb, tcpClientErr);
+   tcp_err(   server->pcb, tcpServerErr);
 
    return true;
 }
@@ -259,8 +272,16 @@ uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
    if( client && client->pcb && client->pcb->callback_arg) {
 
       for( uint16_t i = 0; i < len; ++i ) {
-         while( client->txBuffLen >= TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
-            tight_loop_contents();
+         if( client->txBuffLen >= TCP_CLIENT_TX_BUF_SIZE ) {
+#ifndef NDEBUG
+            gpio_put(TXBUFF_OVFL, HIGH);
+#endif
+            while( client->txBuffLen >= TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
+               tight_loop_contents();
+            }
+#ifndef NDEBUG
+            gpio_put(TXBUFF_OVFL, LOW);
+#endif
          }
          client->txBuff[client->txBuffTail++] = buf[i];
          if( client->txBuffTail == TCP_CLIENT_TX_BUF_SIZE ) {
@@ -268,6 +289,11 @@ uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
          }
          ++client->txBuffLen;
       }
+#ifndef NDEBUG
+      if( client->txBuffLen > maxTxBuffLen ) {
+         maxTxBuffLen = client->txBuffLen;
+      }
+#endif
       if( client->txBuffLen && client->pcb && client->pcb->callback_arg && !client->sending ) {
          tcpSend(client);
       }
@@ -306,7 +332,6 @@ int tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
                client->rxBuffHead = 0;
             }
             if( !--client->rxBuffLen && client->totLen && client->pcb) {
-               //###printf("<%u>", client->totLen);
                cyw43_arch_lwip_begin();
                tcp_recved(client->pcb, client->totLen);
                client->totLen = 0;

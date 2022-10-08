@@ -148,10 +148,8 @@ char *doSpeedChange(char *atCmd) {
                case 115200L:
                   sendResult(R_OK);
                   uart_tx_wait_blocking(uart0);  // wait for transmit to finish
-                  gpio_put(TXEN, HIGH);          // disable the TX output
                   uart_set_baudrate(uart0, newSerialSpeed);
                   settings.serialSpeed = newSerialSpeed;
-                  gpio_put(TXEN, LOW);           // reenable the TX output
                   break;
 
                default:

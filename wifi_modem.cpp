@@ -1,8 +1,31 @@
 //
-//   Retro WiFi modem: a Pico W based RS232<->WiFi modem
+//   Pico WiFi modem: a Pico W based RS232<->WiFi modem
 //   with Hayes style AT commands and blinking LEDs.
 //
-
+//   A "let's learn about the Pico W and lwIP" project. It
+//   betrays its ESP8266 + Arduino IDE roots in its
+//   structure; certainly no one would start a Pico
+//   project from scratch and write it this way!
+//
+//   Originally based on
+//   Original Source Copyright (C) 2016 Jussi Salin <salinjus@gmail.com>
+//   Additions (C) 2018 Daniel Jameson, Stardot Contributors
+//   Additions (C) 2018 Paul Rickards <rickards@gmail.com>
+//   Additions 2020-2022 Wayne Hortensius
+//
+//   This program is free software: you can redistribute it and/or modify
+//   it under the tertms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
 #include <string.h>
 #include <time.h>
 
@@ -49,11 +72,19 @@ void setup(void) {
    gpio_init(DSR);
    gpio_set_dir(DSR, OUTPUT);
    gpio_put(DSR, !ACTIVE);          // modem is not ready
+#ifndef NDEBUG
+   gpio_init(TCP_WRITE_ERR);
+   gpio_set_dir(TCP_WRITE_ERR, OUTPUT);
+   gpio_put(TCP_WRITE_ERR, LOW);
+   
+   gpio_init(RXBUFF_OVFL);
+   gpio_set_dir(RXBUFF_OVFL, OUTPUT);
+   gpio_put(RXBUFF_OVFL, LOW);
 
-   gpio_init(TXEN);
-   gpio_set_dir(TXEN, OUTPUT);      // continue disabling TX until
-   gpio_put(TXEN, HIGH);            // we have set up the Serial port
-
+   gpio_init(TXBUFF_OVFL);
+   gpio_set_dir(TXBUFF_OVFL, OUTPUT);
+   gpio_put(TXBUFF_OVFL, LOW);
+#endif
    initEEPROM();
    readSettings(&settings);
 
@@ -72,8 +103,6 @@ void setup(void) {
    if( settings.dtrHandling != DTR_IGNORE ) {
       gpio_set_irq_enabled_with_callback(DTR, GPIO_IRQ_EDGE_RISE, true, dtrIrq );
    }
-
-   gpio_put(TXEN, LOW);      // enable the TX output
 
    if( settings.startupWait ) {
       while( true ) {            // wait for a CR

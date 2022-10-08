@@ -396,6 +396,8 @@ char *showNetworkInfo(char *atCmd) {
    char infoLine[80];
    size_t maxCatChars;
    uint8_t mac[6];
+   extern char __flash_binary_start, __flash_binary_end;
+
    int wifiStatus = cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA);
 
    do {      // a Q&D hack to allow ^C to terminate the output at the
@@ -461,10 +463,18 @@ char *showNetworkInfo(char *atCmd) {
       if( PagedOut(infoLine) ) break;
       snprintf(infoLine, sizeof infoLine, "Bytes out..: %lu", bytesOut);
       if( PagedOut(infoLine) ) break;
+#ifndef NDEBUG
+      snprintf(infoLine, sizeof infoLine, "Max totLen.: %u", maxTotLen);
+      if( PagedOut(infoLine) ) break;
+      snprintf(infoLine, sizeof infoLine, "Max rxBuff.: %u", maxRxBuffLen);
+      if( PagedOut(infoLine) ) break;
+      snprintf(infoLine, sizeof infoLine, "Max txBuff.: %u", maxTxBuffLen);
+      if( PagedOut(infoLine) ) break;
+#endif
       //###snprintf(infoLine, sizeof infoLine, "Heap free..: %lu", ESP.getFreeHeap());
       //###if( PagedOut(infoLine) ) break;
-      //###snprintf(infoLine, sizeof infoLine, "Sketch size: %lu", ESP.getSketchSize());
-      //###if( PagedOut(infoLine) ) break;
+      snprintf(infoLine, sizeof infoLine, "Pgm. size..: %lu", &__flash_binary_end-&__flash_binary_start);
+      if( PagedOut(infoLine) ) break;
       //###snprintf(infoLine, sizeof infoLine, "Sketch free: %lu", ESP.getFreeSketchSpace() % (1024L * 1024L));
       //###if( PagedOut(infoLine) ) break;
       if( tcpIsConnected(tcpClient) ) {
@@ -749,7 +759,6 @@ char *doExtended(char *atCmd) {
 //
 char *resetToNvram(char *atCmd) {
    uart_tx_wait_blocking(uart0);   // allow for CR/LF to finish
-   gpio_put(TXEN, HIGH);           // before disabling the TX output
    watchdog_enable(1, false);
    while( true ) {
       tight_loop_contents();

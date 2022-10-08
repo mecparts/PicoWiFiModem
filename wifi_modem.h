@@ -77,7 +77,6 @@
    #define DSR  5           // (GPIO05) output
    #define DTR  6           // (GPIO06) input
    #define RI   7           // (GPIO07) output
-   #define TXEN 8           // (GPIO08) output
    
    #define OUTPUT true
    #define INPUT  false
@@ -91,6 +90,12 @@
    #define I2C_BAUD  100000
    
    #define TCP_CLIENT_RX_BUF_SIZE 20000
-   #define TCP_CLIENT_TX_BUF_SIZE 500
+   #define TCP_CLIENT_TX_BUF_SIZE 1100
+   
+#ifndef NDEBUG
+   #define TCP_WRITE_ERR 8
+   #define RXBUFF_OVFL 9
+   #define TXBUFF_OVFL 10
+#endif
 
 #endif
