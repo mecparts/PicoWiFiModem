@@ -93,6 +93,7 @@ char *doDtrHandling(char *atCmd) {
                settings.dtrHandling = DTR_RESET;
                break;
          }
+         gpio_set_irq_enabled(DTR, GPIO_IRQ_EDGE_RISE, settings.dtrHandling != DTR_IGNORE);
          if( atCmd[0] ) {
             ++atCmd;
          }

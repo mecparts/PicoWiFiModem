@@ -100,9 +100,7 @@ void setup(void) {
    setHardwareFlow(settings.rtsCts);
 
    // enable interrupt when DTR goes inactive if we're not ignoring it
-   if( settings.dtrHandling != DTR_IGNORE ) {
-      gpio_set_irq_enabled_with_callback(DTR, GPIO_IRQ_EDGE_RISE, true, dtrIrq );
-   }
+   gpio_set_irq_enabled_with_callback(DTR, GPIO_IRQ_EDGE_RISE, settings.dtrHandling != DTR_IGNORE, dtrIrq );
 
    if( settings.startupWait ) {
       while( true ) {            // wait for a CR
