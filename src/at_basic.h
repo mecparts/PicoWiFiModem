@@ -396,7 +396,6 @@ char *showNetworkInfo(char *atCmd) {
    char infoLine[80];
    size_t maxCatChars;
    uint8_t mac[6];
-   extern char __flash_binary_start, __flash_binary_end;
 
    int wifiStatus = cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA);
 
@@ -471,12 +470,12 @@ char *showNetworkInfo(char *atCmd) {
       snprintf(infoLine, sizeof infoLine, "Max txBuff.: %u", maxTxBuffLen);
       if( PagedOut(infoLine) ) break;
 #endif
-      //###snprintf(infoLine, sizeof infoLine, "Heap free..: %lu", ESP.getFreeHeap());
-      //###if( PagedOut(infoLine) ) break;
-      snprintf(infoLine, sizeof infoLine, "Pgm. size..: %lu", &__flash_binary_end-&__flash_binary_start);
+      snprintf(infoLine, sizeof infoLine, "Heap free..: %lu", getFreeHeap());
       if( PagedOut(infoLine) ) break;
-      //###snprintf(infoLine, sizeof infoLine, "Sketch free: %lu", ESP.getFreeSketchSpace() % (1024L * 1024L));
-      //###if( PagedOut(infoLine) ) break;
+      snprintf(infoLine, sizeof infoLine, "Pgm. size..: %lu", getProgramSize());
+      if( PagedOut(infoLine) ) break;
+      snprintf(infoLine, sizeof infoLine, "Pgm. free..: %lu", getFreeProgramSpace());
+      if( PagedOut(infoLine) ) break;
       if( tcpIsConnected(tcpClient) ) {
          snprintf(infoLine, sizeof infoLine, "Call status: CONNECTED TO %s", ip4addr_ntoa(&tcpClient->pcb->remote_ip));
          if( PagedOut(infoLine) ) break;

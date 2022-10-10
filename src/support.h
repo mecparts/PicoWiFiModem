@@ -4,6 +4,28 @@ void crlf(void) {
    uart_puts(uart0, "\r\n");
 }
 
+uint32_t getTotalHeap(void) {
+   extern char __StackLimit, __bss_end__;
+   
+   return &__StackLimit  - &__bss_end__;
+}
+
+uint32_t getFreeHeap(void) {
+   struct mallinfo m = mallinfo();
+
+   return getTotalHeap() - m.uordblks;
+}
+
+uint32_t getProgramSize(void) {
+   extern char __flash_binary_start, __flash_binary_end;
+
+   return &__flash_binary_end - &__flash_binary_start;
+}
+
+uint32_t getFreeProgramSpace() {
+   return PICO_FLASH_SIZE_BYTES - getProgramSize();
+}
+
 // DTR low to high interrupt handler
 void dtrIrq(uint gpio, uint32_t events) {
    if( gpio == DTR && (events & GPIO_IRQ_EDGE_RISE) ) {
