@@ -13,6 +13,7 @@ char *answerCall(char *atCmd) {
    sendResult(R_RING_IP);
    sleep_ms(1000);
    connectTime = millis();
+   dtrWentInactive = false;
    sendResult(R_CONNECT);
    gpio_put(DCD, ACTIVE); // we've got a carrier signal
    amClient = false;
@@ -176,6 +177,7 @@ char *dialNumber(char *atCmd) {
       tcpClient = tcpConnect( &tcpClient0, host, portNum);
       if( tcpClient ) {
          connectTime = millis();
+         dtrWentInactive = false;
          sendResult(R_CONNECT);
          gpio_put(DCD, ACTIVE);
          state = ONLINE;
@@ -265,6 +267,7 @@ char *httpGet(char *atCmd) {
       gpio_put(DCD, !ACTIVE);
    } else {
       connectTime = millis();
+      dtrWentInactive = false;
       sendResult(R_CONNECT);
       gpio_put(DCD, ACTIVE);
       amClient = true;
@@ -293,7 +296,7 @@ char *hangup(char *atCmd) {
    if( tcpIsConnected(tcpClient) ) {
       endCall();
    } else {
-      sendResult(R_ERROR);
+      sendResult(R_OK);
    }
    return atCmd;
 }
@@ -533,6 +536,7 @@ char *doTelnetMode(char* atCmd) {
 char *goOnline(char *atCmd) {
    if( tcpIsConnected(tcpClient) ) {
       state = ONLINE;
+      dtrWentInactive = false;
       sendResult(R_CONNECT);
    } else {
       sendResult(R_ERROR);

@@ -45,15 +45,15 @@
    typedef struct TCP_CLIENT_T_ {
       struct tcp_pcb *pcb;
       ip_addr_t remoteAddr;
-      bool connected;
-      bool connectFinished;
+      volatile bool connected;
+      volatile bool connectFinished;
       volatile bool sending;
-      uint8_t rxBuff[TCP_CLIENT_RX_BUF_SIZE];
+      volatile uint8_t rxBuff[TCP_CLIENT_RX_BUF_SIZE];
       volatile uint16_t rxBuffLen;
       uint16_t rxBuffHead;
       volatile uint16_t rxBuffTail;
       volatile uint16_t totLen;
-      uint8_t txBuff[TCP_CLIENT_TX_BUF_SIZE];
+      volatile uint8_t txBuff[TCP_CLIENT_TX_BUF_SIZE];
       volatile uint16_t txBuffLen;
       volatile uint16_t txBuffHead;
       uint16_t txBuffTail;

@@ -88,7 +88,7 @@ void inAtCommandMode() {
 // send serial data to the TCP client
 //
 void sendSerialData() {
-   static unsigned long lastSerialData = 0;
+   static uint32_t lastSerialData = 0;
    // in telnet mode, we might have to escape every single char,
    // so don't use more than half the buffer
    size_t maxBufSize = (sessionTelnetType != NO_TELNET) ? TX_BUF_SIZE / 2 : TX_BUF_SIZE;
@@ -101,12 +101,18 @@ void sendSerialData() {
       *p++ = uart_getc(uart0);
    }
 
-   if( escCount || (millis() - lastSerialData >= GUARD_TIME) ) {
+   uint32_t serialInterval = millis() - lastSerialData;
+   // if more than 1 second since the last character,
+   // start the online escape sequence counter over again
+   if( escCount && serialInterval >= GUARD_TIME ) {
+      escCount = 0;
+   }
+   if( settings.escChar < 128 && (escCount || serialInterval >= GUARD_TIME) ) {
       // check for the online escape sequence
       // +++ with a 1 second pause before and after
       // if escape character is >= 128, it's ignored
       for( size_t i = 0; i < len; ++i ) {
-         if( txBuf[i] == settings.escChar && settings.escChar < 128 ) {
+         if( txBuf[i] == settings.escChar ) {
             if( ++escCount == ESC_COUNT ) {
                guardTime = millis() + GUARD_TIME;
             } else {
@@ -395,8 +401,8 @@ void endCall() {
    tcpClientClose(tcpClient);
    tcpClient = NULL;
    sendResult(R_NO_CARRIER);
-   connectTime = 0;
    gpio_put(DCD, !ACTIVE);
+   connectTime = 0;
    escCount = 0;
 }
 
@@ -457,6 +463,7 @@ void checkForIncomingCall() {
             bytesOut += tcpWriteBuf(tcpClient, toCharModeMagic, sizeof toCharModeMagic);
          }
          sendResult(R_RING_IP);
+         gpio_put(DCD, ACTIVE);
          if( settings.serverPassword[0]) {
             tcpWriteStr(tcpClient, "\r\r\nPassword: ");
             state = PASSWORD;
@@ -467,10 +474,10 @@ void checkForIncomingCall() {
             sleep_ms(1000);
             state = ONLINE;
             amClient = false;
+            dtrWentInactive = false;
             sendResult(R_CONNECT);
          }
          connectTime = millis();
-         gpio_put(DCD, ACTIVE);
       }
    } else if( ringing ) {
       gpio_put(RI, !ACTIVE);
@@ -681,6 +688,7 @@ void inPasswordMode() {
             } else {
                state = ONLINE;
                amClient = false;;
+               dtrWentInactive = false;
                sendResult(R_CONNECT);
                tcpWriteStr(tcpClient,"Welcome\r\n");
             }

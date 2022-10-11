@@ -123,7 +123,7 @@ void setup(void) {
       tcpServerStart(&tcpServer, settings.listenPort);
    }
 
-#ifdef OTA_UPDATE_ENABLED
+#if OTA_UPDATE_ENABLED
    if( settings.ssid[0] && cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA) == CYW43_LINK_UP ) {
       setupOTAupdates();
    }
@@ -161,7 +161,7 @@ void loop(void) {
    switch( state ) {
 
       case CMD_NOT_IN_CALL:
-#ifdef OTA_UPDATE_ENABLED
+#if OTA_UPDATE_ENABLED
          if( cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA) == CYW43_LINK_UP ) {
             ArduinoOTA.handle();
          }
