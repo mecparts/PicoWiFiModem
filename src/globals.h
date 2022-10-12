@@ -87,8 +87,8 @@
    volatile bool dtrWentInactive = false;
    bool     amClient = false;    // true if we've connected TO a remote server
 #ifndef NDEBUG
-   uint16_t maxTotLen = 0;
-   uint16_t maxRxBuffLen = 0;
+   volatile uint16_t maxTotLen = 0;
+   volatile uint16_t maxRxBuffLen = 0;
    uint16_t maxTxBuffLen = 0;
 #endif
 

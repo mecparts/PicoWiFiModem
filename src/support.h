@@ -176,7 +176,27 @@ int receiveTcpData() {
          uart_set_break(uart0, false);
          rxByte = -1;
       } else if( rxByte == AYT ) { // are you there?
+#if 1
+         char tBuf[160];
+         snprintf(tBuf,sizeof tBuf, "\r\nrxLen: %u rxHead: %u rxTail: %u\r\ntxLen: %u, txHead: %u, txTail:%u\r\n",
+            tcpClient->rxBuffLen, tcpClient->rxBuffHead, tcpClient->rxBuffTail,
+            tcpClient->txBuffLen, tcpClient->txBuffHead, tcpClient->txBuffTail);
+         bytesOut += tcpWriteStr(tcpClient, tBuf);
+         snprintf(tBuf,sizeof tBuf, "maxTotLen: %u\r\nmaxRxBuffLen: %u\r\nmaxTxBuffLen: %u\r\n",
+            maxTotLen, maxRxBuffLen, maxTxBuffLen);
+         bytesOut += tcpWriteStr(tcpClient, tBuf);
+         if( gpio_get_out_level(TCP_WRITE_ERR) ) {
+            bytesOut += tcpWriteStr(tcpClient,"TCP_WRITE_ERR\r\n");
+         }
+         if( gpio_get_out_level(RXBUFF_OVFL) ) {
+            bytesOut += tcpWriteStr(tcpClient,"RXBUFF_OVFL\r\n");
+         }
+         if( gpio_get_out_level(TXBUFF_OVFL) ) {
+            bytesOut += tcpWriteStr(tcpClient,"TXBUFF_OVFL\r\n");
+         }
+#else
          bytesOut += tcpWriteStr(tcpClient, "\r\n[Yes]\r\n");
+#endif
          rxByte = -1;
       } else if( rxByte != IAC ) { // 2 times 0xff is just an escaped real 0xff
          // rxByte has now the first byte of the actual non-escaped control code
@@ -476,6 +496,11 @@ void checkForIncomingCall() {
             amClient = false;
             dtrWentInactive = false;
             sendResult(R_CONNECT);
+#ifndef NDEBUG
+            gpio_put(TCP_WRITE_ERR, LOW);
+            gpio_put(RXBUFF_OVFL, LOW);
+            gpio_put(TXBUFF_OVFL, LOW);
+#endif
          }
          connectTime = millis();
       }
@@ -690,6 +715,11 @@ void inPasswordMode() {
                amClient = false;;
                dtrWentInactive = false;
                sendResult(R_CONNECT);
+#ifndef NDEBUG
+               gpio_put(TCP_WRITE_ERR, LOW);
+               gpio_put(RXBUFF_OVFL, LOW);
+               gpio_put(TXBUFF_OVFL, LOW);
+#endif
                tcpWriteStr(tcpClient,"Welcome\r\n");
             }
             break;

@@ -45,10 +45,10 @@ bool tcpIsConnected(TCP_CLIENT_T *client) {
 err_t tcpClientClose(TCP_CLIENT_T *client) {
    err_t err = ERR_OK;
    
+   cyw43_arch_lwip_begin();
    if( client ) {
       client->connected = false;
       if( client->pcb ) {
-         cyw43_arch_lwip_begin();
          tcp_err( client->pcb, NULL);
          tcp_sent(client->pcb, NULL);
          tcp_recv(client->pcb, NULL);
@@ -58,10 +58,10 @@ err_t tcpClientClose(TCP_CLIENT_T *client) {
             tcp_abort(client->pcb);
             err = ERR_ABRT;
          }
-         cyw43_arch_lwip_end();
          client->pcb = NULL;
       }
    }
+   cyw43_arch_lwip_end();
    return err;
 }
 
@@ -78,29 +78,32 @@ static void tcpClientErr(void *arg, err_t err) {
 
 static err_t tcpSend(TCP_CLIENT_T *client) {
    err_t err = ERR_OK;
-   int maxLen = tcp_sndbuf(client->pcb);
-   if( client->txBuffLen < maxLen ) {
-      maxLen = client->txBuffLen;
-   }
-   uint8_t tmp[maxLen];
-   for( int i = 0; i < maxLen; ++i ) {
-      tmp[i] = client->txBuff[client->txBuffHead++];
-      if( client->txBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
-         client->txBuffHead = 0;
-      }
-      --client->txBuffLen;
-   }
-   client->sending = true;
-   cyw43_arch_lwip_begin();
-   err = tcp_write(client->pcb, tmp, maxLen, TCP_WRITE_FLAG_COPY);
-   client->sending = err == ERR_OK;
-   tcp_output(client->pcb);
-   cyw43_arch_lwip_end();
+   
+   if( client->txBuffLen ) {
+      uint16_t maxLen = tcp_sndbuf(client->pcb);
+      if( maxLen > 0 && tcp_sndqueuelen(client->pcb) < TCP_SND_QUEUELEN ) {
+         if( client->txBuffLen < maxLen ) {
+            maxLen = client->txBuffLen;
+         }
+         uint8_t tmp[maxLen];
+         for( int i = 0; i < maxLen; ++i ) {
+            tmp[i] = client->txBuff[client->txBuffHead++];
+            if( client->txBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
+               client->txBuffHead = 0;
+            }
+            --client->txBuffLen;
+         }
+         client->sending = true;
+         err = tcp_write(client->pcb, tmp, maxLen, TCP_WRITE_FLAG_COPY);
+         client->sending = err == ERR_OK;
+         tcp_output(client->pcb);
 #ifndef NDEBUG
-   if( err != ERR_OK ) {
-      gpio_put(TCP_WRITE_ERR, HIGH);
-   }
+         if( err != ERR_OK ) {
+            gpio_put(TCP_WRITE_ERR, HIGH);
+         }
 #endif
+      }
+   }
    return err;
 }
 
@@ -109,7 +112,9 @@ static err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
    err_t err = ERR_OK;
    
    if( client->txBuffLen ) {
+      cyw43_arch_lwip_begin();
       err = tcpSend(client);
+      cyw43_arch_lwip_end();
    } else {
       client->sending = false;
    }
@@ -269,20 +274,23 @@ bool tcpServerStart(TCP_SERVER_T *server, int portNum) {
 }
 
 uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
-   if( client && client->pcb && client->pcb->callback_arg) {
+   if( client && client->pcb && client->pcb->callback_arg ) {
 
-      for( uint16_t i = 0; i < len; ++i ) {
-         if( client->txBuffLen >= TCP_CLIENT_TX_BUF_SIZE ) {
+      if( client->txBuffLen + len > TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
 #ifndef NDEBUG
-            gpio_put(TXBUFF_OVFL, HIGH);
+         gpio_put(TXBUFF_OVFL, HIGH);
 #endif
-            while( client->txBuffLen >= TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
-               tight_loop_contents();
-            }
-#ifndef NDEBUG
-            gpio_put(TXBUFF_OVFL, LOW);
-#endif
+         while( client->txBuffLen + len > TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
+            tight_loop_contents();
          }
+#ifndef NDEBUG
+         gpio_put(TXBUFF_OVFL, LOW);
+#endif
+      }
+      // lock out the lwIP thread now so that it can't end up calling
+      // tcpSend until we're done with it
+      cyw43_arch_lwip_begin();
+      for( uint16_t i = 0; i < len; ++i ) {
          client->txBuff[client->txBuffTail++] = buf[i];
          if( client->txBuffTail == TCP_CLIENT_TX_BUF_SIZE ) {
             client->txBuffTail = 0;
@@ -297,6 +305,7 @@ uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
       if( client->txBuffLen && client->pcb && client->pcb->callback_arg && !client->sending ) {
          tcpSend(client);
       }
+      cyw43_arch_lwip_end();
       return len;
    }
    return 0;

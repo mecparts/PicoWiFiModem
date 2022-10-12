@@ -16,6 +16,11 @@ char *answerCall(char *atCmd) {
    dtrWentInactive = false;
    sendResult(R_CONNECT);
    gpio_put(DCD, ACTIVE); // we've got a carrier signal
+#ifndef NDEBUG
+   gpio_put(TCP_WRITE_ERR, LOW);
+   gpio_put(RXBUFF_OVFL, LOW);
+   gpio_put(TXBUFF_OVFL, LOW);
+#endif
    amClient = false;
    state = ONLINE;
    uart_tx_wait_blocking(uart0); // drain the UART's Tx FIFO
@@ -180,6 +185,11 @@ char *dialNumber(char *atCmd) {
          dtrWentInactive = false;
          sendResult(R_CONNECT);
          gpio_put(DCD, ACTIVE);
+#ifndef NDEBUG
+         gpio_put(TCP_WRITE_ERR, LOW);
+         gpio_put(RXBUFF_OVFL, LOW);
+         gpio_put(TXBUFF_OVFL, LOW);
+#endif
          state = ONLINE;
          amClient = true;
       } else {
@@ -270,6 +280,11 @@ char *httpGet(char *atCmd) {
       dtrWentInactive = false;
       sendResult(R_CONNECT);
       gpio_put(DCD, ACTIVE);
+#ifndef NDEBUG
+      gpio_put(TCP_WRITE_ERR, LOW);
+      gpio_put(RXBUFF_OVFL, LOW);
+      gpio_put(TXBUFF_OVFL, LOW);
+#endif
       amClient = true;
       state = ONLINE;
 
@@ -538,6 +553,11 @@ char *goOnline(char *atCmd) {
       state = ONLINE;
       dtrWentInactive = false;
       sendResult(R_CONNECT);
+#ifndef NDEBUG
+      gpio_put(TCP_WRITE_ERR, LOW);
+      gpio_put(RXBUFF_OVFL, LOW);
+      gpio_put(TXBUFF_OVFL, LOW);
+#endif
    } else {
       sendResult(R_ERROR);
    }

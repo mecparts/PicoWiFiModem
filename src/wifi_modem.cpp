@@ -116,7 +116,12 @@ void setup(void) {
    cyw43_arch_init();
    cyw43_arch_enable_sta_mode();
    if( settings.ssid[0] ) {
-      cyw43_arch_wifi_connect_timeout_ms(settings.ssid, settings.wifiPassword, CYW43_AUTH_WPA2_AES_PSK, 10000);
+      for( int i = 0; i < 4; ++i ) {
+         cyw43_arch_wifi_connect_timeout_ms(settings.ssid, settings.wifiPassword, CYW43_AUTH_WPA2_AES_PSK, 10000);
+         if( cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA) == CYW43_LINK_UP ) {
+            break;
+         }
+      }
    }
 
    if( settings.listenPort ) {
