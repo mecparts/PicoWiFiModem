@@ -115,6 +115,11 @@ void setup(void) {
 
    cyw43_arch_init();
    cyw43_arch_enable_sta_mode();
+   // disable Wifi power management
+   // if this is not done, after 5-10 minutes the Pico W does not
+   // respond to incoming packets and can only be awoken by the
+   // arrival of serial data
+   cyw43_wifi_pm(&cyw43_state, CYW43_DEFAULT_PM & ~0xf);
    if( settings.ssid[0] ) {
       for( int i = 0; i < 4; ++i ) {
          cyw43_arch_wifi_connect_timeout_ms(settings.ssid, settings.wifiPassword, CYW43_AUTH_WPA2_AES_PSK, 10000);

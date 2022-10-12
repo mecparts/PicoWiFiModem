@@ -176,7 +176,7 @@ int receiveTcpData() {
          uart_set_break(uart0, false);
          rxByte = -1;
       } else if( rxByte == AYT ) { // are you there?
-#if 1
+#ifndef NDEBUG
          char tBuf[160];
          snprintf(tBuf,sizeof tBuf, "\r\nrxLen: %u rxHead: %u rxTail: %u\r\ntxLen: %u, txHead: %u, txTail:%u\r\n",
             tcpClient->rxBuffLen, tcpClient->rxBuffHead, tcpClient->rxBuffTail,
