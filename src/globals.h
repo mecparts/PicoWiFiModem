@@ -47,7 +47,7 @@
       ip_addr_t remoteAddr;
       volatile bool connected;
       volatile bool connectFinished;
-      volatile bool sending;
+      volatile bool waitingForAck;
       volatile uint8_t rxBuff[TCP_CLIENT_RX_BUF_SIZE];
       volatile uint16_t rxBuffLen;
       uint16_t rxBuffHead;
@@ -90,6 +90,7 @@
    volatile uint16_t maxTotLen = 0;
    volatile uint16_t maxRxBuffLen = 0;
    uint16_t maxTxBuffLen = 0;
+   err_t lastTcpWriteErr = ERR_OK;
 #endif
 
 #endif

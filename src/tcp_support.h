@@ -51,6 +51,7 @@ err_t tcpClientClose(TCP_CLIENT_T *client) {
       if( client->pcb ) {
          tcp_err( client->pcb, NULL);
          tcp_sent(client->pcb, NULL);
+         tcp_poll(client->pcb, NULL, 0);
          tcp_recv(client->pcb, NULL);
          tcp_arg( client->pcb, NULL);
          err = tcp_close(client->pcb);
@@ -86,22 +87,30 @@ static err_t tcpSend(TCP_CLIENT_T *client) {
             maxLen = client->txBuffLen;
          }
          uint8_t tmp[maxLen];
+         // make copies of the head and length and work
+         // with those in case tcp_write fails and we
+         // have to re-send the same data later
+         uint16_t tmpTxBuffHead = client->txBuffHead;
+         uint16_t tmpTxBuffLen = client->txBuffLen;
          for( int i = 0; i < maxLen; ++i ) {
-            tmp[i] = client->txBuff[client->txBuffHead++];
-            if( client->txBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
-               client->txBuffHead = 0;
+            tmp[i] = client->txBuff[tmpTxBuffHead++];
+            if( tmpTxBuffHead == TCP_CLIENT_TX_BUF_SIZE ) {
+               tmpTxBuffHead = 0;
             }
-            --client->txBuffLen;
+            --tmpTxBuffLen;
          }
-         client->sending = true;
          err = tcp_write(client->pcb, tmp, maxLen, TCP_WRITE_FLAG_COPY);
-         client->sending = err == ERR_OK;
-         tcp_output(client->pcb);
+         client->waitingForAck |= err == ERR_OK;
+         if( err == ERR_OK ) {
+            tcp_output(client->pcb);
+            client->txBuffHead = tmpTxBuffHead;
+            client->txBuffLen = tmpTxBuffLen;
 #ifndef NDEBUG
-         if( err != ERR_OK ) {
+         } else {
             gpio_put(TCP_WRITE_ERR, HIGH);
-         }
+            lastTcpWriteErr = err;
 #endif
+         }
       }
    }
    return err;
@@ -116,7 +125,22 @@ static err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
       err = tcpSend(client);
       cyw43_arch_lwip_end();
    } else {
-      client->sending = false;
+      client->waitingForAck = false;
+   }
+   return err;
+}
+
+// in the event that the tcp_write call in tcpSend failed earlier,
+// and there weren't any other packets waiting to be ACKed, try
+// sending any data in the txBuff again.
+static err_t tcpPoll(void *arg, struct tcp_pcb *tpcb) {
+   TCP_CLIENT_T *client = (TCP_CLIENT_T *)arg;
+   err_t err = ERR_OK;
+   
+   if( !client->waitingForAck && client->txBuffLen ) {
+      cyw43_arch_lwip_begin();
+      err = tcpSend(client);
+      cyw43_arch_lwip_end();
    }
    return err;
 }
@@ -183,6 +207,7 @@ TCP_CLIENT_T *tcpConnect(TCP_CLIENT_T *client, const char *host, int portNum) {
    tcp_arg( client->pcb, client);
    tcp_recv(client->pcb, tcpRecv);
    tcp_sent(client->pcb, tcpSent);
+   tcp_poll(client->pcb, tcpPoll, 2);
    tcp_err( client->pcb, tcpClientErr);
    tcp_nagle_disable(client->pcb);  // disable Nalge algorithm by default
 
@@ -197,7 +222,7 @@ TCP_CLIENT_T *tcpConnect(TCP_CLIENT_T *client, const char *host, int portNum) {
 
    client->connected = false;
    client->connectFinished = false;
-   client->sending = false;
+   client->waitingForAck = false;
 
    cyw43_arch_lwip_begin();
    err_t err = tcp_connect(client->pcb, &client->remoteAddr, portNum, tcpHasConnected);
@@ -288,7 +313,8 @@ uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
 #endif
       }
       // lock out the lwIP thread now so that it can't end up calling
-      // tcpSend until we're done with it
+      // tcpSend until we're done with it... really don't want two
+      // threads messing with txBuff at the same time.
       cyw43_arch_lwip_begin();
       for( uint16_t i = 0; i < len; ++i ) {
          client->txBuff[client->txBuffTail++] = buf[i];
@@ -302,7 +328,7 @@ uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
          maxTxBuffLen = client->txBuffLen;
       }
 #endif
-      if( client->txBuffLen && client->pcb && client->pcb->callback_arg && !client->sending ) {
+      if( client->txBuffLen && client->pcb && client->pcb->callback_arg && !client->waitingForAck ) {
          tcpSend(client);
       }
       cyw43_arch_lwip_end();
@@ -405,11 +431,12 @@ TCP_CLIENT_T *serverGetClient(TCP_SERVER_T *server, TCP_CLIENT_T *client) {
    client->txBuffHead = 0;
    client->txBuffTail = 0;
 
-   client->sending = false;
+   client->waitingForAck = false;
 
    tcp_arg( client->pcb, client);
    tcp_err( client->pcb, tcpClientErr);
    tcp_sent(client->pcb, tcpSent);
+   tcp_poll(client->pcb, tcpPoll, 2);
    tcp_recv(client->pcb, tcpRecv);
    tcp_nagle_disable(client->pcb);  // disable Nalge algorithm by default
 

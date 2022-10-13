@@ -186,12 +186,17 @@ int receiveTcpData() {
             maxTotLen, maxRxBuffLen, maxTxBuffLen);
          bytesOut += tcpWriteStr(tcpClient, tBuf);
          if( gpio_get_out_level(TCP_WRITE_ERR) ) {
-            bytesOut += tcpWriteStr(tcpClient,"TCP_WRITE_ERR\r\n");
+            gpio_put(TCP_WRITE_ERR, LOW);
+            snprintf(tBuf, sizeof tBuf, "TCP_WRITE_ERR: %d\r\n", lastTcpWriteErr);
+            lastTcpWriteErr = ERR_OK;
+            bytesOut += tcpWriteStr(tcpClient, tBuf);
          }
          if( gpio_get_out_level(RXBUFF_OVFL) ) {
+            gpio_put(RXBUFF_OVFL, LOW);
             bytesOut += tcpWriteStr(tcpClient,"RXBUFF_OVFL\r\n");
          }
          if( gpio_get_out_level(TXBUFF_OVFL) ) {
+            gpio_put(TXBUFF_OVFL, LOW);
             bytesOut += tcpWriteStr(tcpClient,"TXBUFF_OVFL\r\n");
          }
 #else
@@ -496,11 +501,6 @@ void checkForIncomingCall() {
             amClient = false;
             dtrWentInactive = false;
             sendResult(R_CONNECT);
-#ifndef NDEBUG
-            gpio_put(TCP_WRITE_ERR, LOW);
-            gpio_put(RXBUFF_OVFL, LOW);
-            gpio_put(TXBUFF_OVFL, LOW);
-#endif
          }
          connectTime = millis();
       }
@@ -715,11 +715,6 @@ void inPasswordMode() {
                amClient = false;;
                dtrWentInactive = false;
                sendResult(R_CONNECT);
-#ifndef NDEBUG
-               gpio_put(TCP_WRITE_ERR, LOW);
-               gpio_put(RXBUFF_OVFL, LOW);
-               gpio_put(TXBUFF_OVFL, LOW);
-#endif
                tcpWriteStr(tcpClient,"Welcome\r\n");
             }
             break;
