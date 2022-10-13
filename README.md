@@ -2,18 +2,26 @@
 
 ## A Pico W based RS232 \<-\> WiFi modem with Hayes AT style commands and LED indicators
 
-![Front Panel](images/Front%20panel.jpg "Back Panel")
+![Front Panel](images/Front%20panel.jpg "Front Panel")
 
 This project began as an exercise to learn about the Pico W and lwIP.
 Then, as I figured things out, it sort of took on a life of its own...
 
-The code was ported from my [Retro WiFi Modem](https://github.com/mecparts/RetroWiFiModem). 
+The code was ported from my 
+[Retro WiFi Modem](https://github.com/mecparts/RetroWiFiModem). 
 One look at it will betray its Arduino IDE origin! It's definitely not
 the most efficient way to do things in the Pico world, but it worked
 well enough for my purposes in learning "okay, I know what I want to do
 here, but how does the Pico C/C++ SDK do it?"
 
+It likely would have been much faster to install one of the Pico-Arduino
+cores. I imagine the code changes would have been much fewer. But I
+don't think I would have learned anywhere near as much about the
+workings of the Pico W and lwIP
+
 ## The Hardware
+
+![Prototype](images/Prototype.jpg "Prototype")
 
 As with the code, I re-up'd a lot of the original hardware decisions.
 But, since this time around it wasn't a pandemic project that I was 
@@ -35,8 +43,7 @@ wanted to get a feel for I2C on the Pico as well.
 
 The power connector expects a 2.1mm I.D. x 5.5mm O.D. barrel plug,
 delivering 5 volts, centre positive.  I used a Tri-Mag L6R06H-050 (5V,
-1.2A), [DigiKey part#
-364-1251-ND](https://www.digikey.com/product-detail/en/tri-mag-llc/L6R06H-050/364-1251-ND/7682614).
+1.2A), [DigiKey part# 364-1251-ND](https://www.digikey.com/product-detail/en/tri-mag-llc/L6R06H-050/364-1251-ND/7682614).
 If you plug in a 9V adapter like you'd use for an Arduino, you *will*
 let the magic smoke out and have an ex-modem on your hands.
 
@@ -73,9 +80,10 @@ pricey. But there's plenty of room for an ordinary solder cup DE-9F.
 You'd most likely want to omit the 10 pin header and just wire the DE-9F
 right to the board.
 
-I made no attempt to make this board by hand. Instead, I took advantage
-of an introductory offer by a well known PCB house and had PCBs made.
-5 boards for under 20 bucks? Who could say no?
+Unlike the original Retro Wifi Modem, I made no attempt to make this
+board by hand. Instead, I took advantage of an introductory offer by a
+well known PCB house and had PCBs made. 5 boards for under 20 bucks, and
+delivered in under a week? Who could say no?
 
 ## The Software
 
@@ -160,21 +168,32 @@ AT$TTS?<br>AT$TTS=*WxH* | Query or change the window size (columns x rows) to be
 AT$TTY?<br>AT$TTY=*terminal type* | Query or change the terminal type to be returned when the Telnet server issues a TERMINAL-TYPE request. The default value is "ansi".
 AT$W?<br>AT$W=*n* | Startup wait.<br><br><ul><li>$W=0 Startup with no wait.</li><li>$W=1 Wait for the return key to be pressed at startup.</li></ul>
 
-### Updating the Software
+### Updating the Code
 
 As I'm writing this, I haven't settled on an OTA programming method that
 I like. But I will figure something out; taking the modem apart to do a
-software update will get old the very first time I have to do it. Plus,
+code update will get old the very first time I have to do it. Plus,
 it means that the Pico W can't be soldered down to the PCB, and that'd
 be a nice to have as well.
 
 ## Status
 
-Is a personal project like this ever *really* finished? I've had two
-units assembled and in use since the spring of 2020, and while there's
-been some software changes since then, I really don't expect any more.
-There are no outstanding bugs that I'm aware of, and no new features on
-my wish list. For the time being at least, I think it's complete.
+It's a work in progress at the moment. The lack of OTA programming is
+the big "needs to be done" item.
+
+As this is my first Pico project, and the first time I've written lwIP 
+stuff (and the first time I've really had to make changes to CMake 
+stuff), I've run headlong into all the usual beginner gotchas. And I'm
+completely, absolutely sure that I haven't found them all yet.
+
+The code works reasonably well at the moment; it can call out, you can 
+call in, Ymodem and Zmodem transfters work, I've figured out why it used
+to appear to lock up when I left it alone for 10 minutes (Wifi power
+management, if you're wondering)... but I'm under no illusion that there
+aren't bugs aplenty yet to be squashed. After all, I found a handful of
+problems in the original ESP8266 Retro Wifi modem code while I was
+getting the Pico code working, and the ESP code had been pretty much
+stable for over two years.
 
 ### Linux, Telnet, Zmodem and downloading binary files
 
@@ -183,13 +202,13 @@ Have you used the modem to 'dial' into a Linux box? And have you done a
 point in the file, has the connection dropped? But other binary files
 work just fine? Then read on.
 
-This drove me slightly batty for months. I finally narrowed it down to
-trying to send blocks of binary data with a large number of FF bytes. I
-eventually created a test file consisting of 2K of FF and used that to
-test with. I could download it through the modem with Xmodem just fine.
-Ymodem also worked if I kept the block size down to 128 bytes - but the
-connection would drop instantly if I tried sending 1K blocks. Same thing
-with Zmodem.
+This drove me slightly batty for months on the original Retro modem. I
+finally narrowed it down to trying to send blocks of binary data with a
+large number of FF bytes. eventually created a test file consisting of
+2K of FF and used that to test with. I could download it through the
+modem with Xmodem just fine. Ymodem also worked if I kept the block size
+down to 128 bytes - but the connection would drop instantly if I tried
+sending 1K blocks. Same thing with Zmodem.
 
 In fact, if I just tried `cat binary_file`, the connection would
 drop. Which eventually got me thinking. Sitting at the console on my
