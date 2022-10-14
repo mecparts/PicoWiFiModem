@@ -26,6 +26,7 @@ workings of the Pico W and lwIP as I did by using the Pico SDK.
 | ![Prototype](images/Prototype.jpg "Prototype") |
 |:--:|
 | The prototype |
+
 As with the code, I re-up'd a lot of the original hardware decisions.
 But, since this time around it wasn't a pandemic project that I was 
 trying to do as much as possible with parts on hand, I used a MAX3237
@@ -60,7 +61,7 @@ delivering 5 volts, centre positive.  I used a Tri-Mag L6R06H-050 (5V,
 If you plug in a 9V adapter like you'd use for an Arduino, you *will*
 let the magic smoke out and have an ex-modem on your hands.
 
-| ![Schematic](images/PicoWiFiModem.sch.png "Schematic") |
+| ![Schematic](images/PicoWifiModem.sch.png "Schematic") |
 |:--:|
 | The schematic |
 
