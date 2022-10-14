@@ -2,7 +2,9 @@
 
 ## A Pico W based RS232 \<-\> WiFi modem with Hayes AT style commands and LED indicators
 
-![Front Panel](images/Front%20panel.jpg "Front Panel")
+| ![Front Panel](images/Front%20panel.jpg "Front Panel") |
+|:--:|
+| The Pico WiFi modem |
 
 This project began as an exercise to learn about the Pico W and lwIP.
 Then, as I figured things out, it sort of took on a life of its own...
@@ -15,18 +17,23 @@ well enough for my purposes in learning "okay, I know what I want to do
 here, but how does the Pico C/C++ SDK do it?"
 
 It likely would have been much faster to install one of the Pico-Arduino
-cores. I imagine the code changes would have been much fewer. But I
+cores. I imagine there would have been far fewer code changes. But I
 don't think I would have learned anywhere near as much about the
-workings of the Pico W and lwIP
+workings of the Pico W and lwIP as I did by using the Pico SDK.
 
 ## The Hardware
 
-![Prototype](images/Prototype.jpg "Prototype")
-
+| ![Prototype](images/Prototype.jpg "Prototype") |
+|:--:|
+| The prototype |
 As with the code, I re-up'd a lot of the original hardware decisions.
 But, since this time around it wasn't a pandemic project that I was 
 trying to do as much as possible with parts on hand, I used a MAX3237
 instead of a MAX3232.
+
+| ![Interior](images/Interior.jpg "Interior") |
+|:--:|
+| The interior |
 
 The modem still uses the classic Hayes style blinking LEDs and a DE-9F
 for the RS-232 connector. Everything is displayed: RTS, CTS, DSR, DTR,
@@ -39,7 +46,13 @@ Since the Pico W doesn't have EEPROM on board, I added a small 4K I2C
 EEPROM to the mix. I could have used a block of the Pico's flash, but I
 wanted to get a feel for I2C on the Pico as well.
 
-![Back Panel](images/Back%20panel.jpg "Back Panel")
+The Pico is socketed on this first board due to the lack of OTA
+programming. The PCB is set up to allow it to be soldered directrly on
+the board once I have that figured out.
+
+| ![Back Panel](images/Back%20panel.jpg "Back Panel") |
+|:--:|
+| The back panel |
 
 The power connector expects a 2.1mm I.D. x 5.5mm O.D. barrel plug,
 delivering 5 volts, centre positive.  I used a Tri-Mag L6R06H-050 (5V,
@@ -47,7 +60,9 @@ delivering 5 volts, centre positive.  I used a Tri-Mag L6R06H-050 (5V,
 If you plug in a 9V adapter like you'd use for an Arduino, you *will*
 let the magic smoke out and have an ex-modem on your hands.
 
-![Schematic](images/PicoWiFiModem.sch.png "Schematic")
+| ![Schematic](images/PicoWiFiModem.sch.png "Schematic") |
+|:--:|
+| The schematic |
 
 On the off chance that there's someone else out there with a well
 stocked parts box and a burning desire to put together their own Pico
@@ -90,9 +105,11 @@ delivered in under a week? Who could say no?
 The software is naturally quite similar to the original ESP8266 Wifi
 modem. There are a few changes (and one fairly major omission):
 
-* DTR signal handling
+* DTR signal handling (AT&D)
+* Escape sequence character definition (ATS2)
 * no OTA reprogramming (yet!)
 
+And 
 ### First time setup
 
 The default serial configuration is 9600bps, 8 data bits, no parity, 1
