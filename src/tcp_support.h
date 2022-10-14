@@ -100,14 +100,17 @@ static err_t tcpSend(TCP_CLIENT_T *client) {
             --tmpTxBuffLen;
          }
          err = tcp_write(client->pcb, tmp, maxLen, TCP_WRITE_FLAG_COPY);
-         client->waitingForAck |= err == ERR_OK;
+         client->waitingForAck = err == ERR_OK;
+         tcp_output(client->pcb);
          if( err == ERR_OK ) {
-            tcp_output(client->pcb);
             client->txBuffHead = tmpTxBuffHead;
             client->txBuffLen = tmpTxBuffLen;
 #ifndef NDEBUG
          } else {
             gpio_put(TCP_WRITE_ERR, HIGH);
+//###            if( err != lastTcpWriteErr ) {
+//###               printf("TWE: %d\r\n", err);
+//###            }
             lastTcpWriteErr = err;
 #endif
          }
@@ -121,9 +124,7 @@ static err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
    err_t err = ERR_OK;
    
    if( client->txBuffLen ) {
-      cyw43_arch_lwip_begin();
       err = tcpSend(client);
-      cyw43_arch_lwip_end();
    } else {
       client->waitingForAck = false;
    }
@@ -138,9 +139,7 @@ static err_t tcpPoll(void *arg, struct tcp_pcb *tpcb) {
    err_t err = ERR_OK;
    
    if( !client->waitingForAck && client->txBuffLen ) {
-      cyw43_arch_lwip_begin();
       err = tcpSend(client);
-      cyw43_arch_lwip_end();
    }
    return err;
 }
@@ -257,14 +256,14 @@ static err_t tcpServerAccept(void *arg, struct tcp_pcb *clientPcb, err_t err) {
    TCP_SERVER_T *server = (TCP_SERVER_T*)arg;
 
    if( err != ERR_OK || !clientPcb ) {
-      printf("Failure in accept: %d\n",err); //###
+//###      printf("Failure in accept: %d\n",err); //###
       server->clientPcb = NULL;
       tcp_close(server->pcb);
       return ERR_VAL;
    }
-   if( server->clientPcb ) {
-      printf("Overwriting server->clientPcb\n");   //###
-   }
+//###   if( server->clientPcb ) {
+//###      printf("Overwriting server->clientPcb\n");   //###
+//###   }
    server->clientPcb = clientPcb;
    return ERR_OK;
 }
