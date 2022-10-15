@@ -174,6 +174,7 @@ AT&V*n* | Display current or stored settings.<br><br><ul><li>&V0 Display current
 AT&W | Save current settings to NVRAM.
 AT&Zn?<br>AT&Z*n*=*host[:port],alias* | Store up to 10 numbers in NVRAM, where *n* is the position 0-9 in NVRAM, and *host[:port]* is the host string, and *alias* is the speed dial alias name. The host string may be up to 50 characters long, and the alias string may be up to 16 characters long.<br><br>Example: `AT&Z2=particlesbbs.dyndns.org:6400,particles`<br><br>This number can then be dialed in any of the following ways:<br><br><ul><li>`ATDS2`</li><li>`ATDTparticles`</li><li>`ATDT2222222`</li></ul>
 AT$AE?<br>AT$AE=*startup AT cmd* | Query or change the command line to be executed when the modem starts up.
+AT$AYT | Sends a Telnet "Are You There?" command if connected to a Telnet remote.
 AT$BM?<br>AT$BM=*server busy msg* | Query or change a message to be returned to an incoming connection if the modem is busy (i.e. already has a connection established).
 AT$MDNS<br>AT$MDNS=*mDNS name* | Query or change the mDNS network name (defaults to "espmodem"). When a non zero TCP port is defined, you can telnet to that port with **telnet mdnsname.local port**.
 AT$PASS?<br>AT$PASS=*WiFi pwd* | Query or change the current WiFi password. The password is case sensitive. Clear the password by issuing the set command with no password. The maximum length of the password is 64 characters.
@@ -205,13 +206,30 @@ stuff), I've run headlong into all the usual beginner gotchas. And I'm
 completely, absolutely sure that I haven't found them all yet.
 
 The code works reasonably well at the moment; it can call out, you can 
-call in, Ymodem and Zmodem transfters work, I've figured out why it used
+call in, Ymodem and Zmodem transfers work, I've figured out why it used
 to appear to lock up when I left it alone for 10 minutes (Wifi power
 management, if you're wondering)... but I'm under no illusion that there
 aren't bugs aplenty yet to be squashed. After all, I found a handful of
 problems in the original ESP8266 Retro Wifi modem code while I was
 getting the Pico code working, and the ESP code had been pretty much
 stable for over two years.
+
+And I think I may have also discovered why every once in a while, the
+modem would get behind a few (or many) characters either on receive or
+transmit. The 'volatile' qualifier isn't of as much use with variables
+modified by two threads as it is with memory mapped I/O or hardware
+registers. To make a long story short, '++var' and '--var' aren't
+atomic operations; they're read/modify/write. And every once in a great
+while the main thread would be updated a buffer length at the same time
+the lwIP thread was updating the same buffer length and whackiness
+ensued.
+
+For the moment, I've taken the naive approach of surrounding the buffer
+length writes with disable/re-enable interrupt calls. I think that will
+work reasonably well (though if I ever decided to make use of the second
+core, it'll fail because interrupts are only disabled on the calling
+core). If not, it'll be time to bone up on mutexes and semaphores and
+critical sections.
 
 ### Linux, Telnet, Zmodem and downloading binary files
 

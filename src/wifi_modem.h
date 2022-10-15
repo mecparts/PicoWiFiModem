@@ -93,7 +93,7 @@
    #define TCP_CLIENT_TX_BUF_SIZE 1100
    
 #ifndef NDEBUG
-   #define TCP_WRITE_ERR 8
+   #define POLL_STATE_LED 8
    #define RXBUFF_OVFL 9
    #define TXBUFF_OVFL 10
 #endif

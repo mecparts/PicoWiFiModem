@@ -185,9 +185,8 @@ int receiveTcpData() {
          snprintf(tBuf,sizeof tBuf, "maxTotLen: %u\r\nmaxRxBuffLen: %u\r\nmaxTxBuffLen: %u\r\n",
             maxTotLen, maxRxBuffLen, maxTxBuffLen);
          bytesOut += tcpWriteStr(tcpClient, tBuf);
-         if( gpio_get_out_level(TCP_WRITE_ERR) ) {
-            gpio_put(TCP_WRITE_ERR, LOW);
-            snprintf(tBuf, sizeof tBuf, "TCP_WRITE_ERR: %d\r\n", lastTcpWriteErr);
+         if( lastTcpWriteErr != ERR_OK ) {
+            snprintf(tBuf, sizeof tBuf, "lastTcpWriteErr: %d\r\n", lastTcpWriteErr);
             lastTcpWriteErr = ERR_OK;
             bytesOut += tcpWriteStr(tcpClient, tBuf);
          }

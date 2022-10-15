@@ -34,6 +34,7 @@
 #include "pico/cyw43_arch.h"
 #include "hardware/watchdog.h"
 #include "hardware/i2c.h"
+#include "hardware/sync.h"
 
 #include "lwip/pbuf.h"
 #include "lwip/tcp.h"
@@ -74,9 +75,9 @@ void setup(void) {
    gpio_set_dir(DSR, OUTPUT);
    gpio_put(DSR, !ACTIVE);          // modem is not ready
 #ifndef NDEBUG
-   gpio_init(TCP_WRITE_ERR);
-   gpio_set_dir(TCP_WRITE_ERR, OUTPUT);
-   gpio_put(TCP_WRITE_ERR, LOW);
+   gpio_init(POLL_STATE_LED);
+   gpio_set_dir(POLL_STATE_LED, OUTPUT);
+   gpio_put(POLL_STATE_LED, LOW);
    
    gpio_init(RXBUFF_OVFL);
    gpio_set_dir(RXBUFF_OVFL, OUTPUT);
@@ -260,6 +261,9 @@ void doAtCmds(char *atCmd) {
                if( !strncasecmp(atCmd, "?", 1)  ) { // help message
                   // help
                   atCmd = showHelp(atCmd + 1);
+               } else if( !strncasecmp(atCmd, "$AYT", 4) ) {
+                  // send Telnet "Are You There?"
+                  atCmd = doAreYouThere(atCmd + 4);
                } else if( !strncasecmp(atCmd, "$SB", 3) ) {
                   // query/set serial speed
                   atCmd = doSpeedChange(atCmd + 3);

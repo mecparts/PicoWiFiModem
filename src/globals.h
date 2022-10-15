@@ -50,13 +50,13 @@
       volatile bool waitingForAck;
       volatile uint8_t rxBuff[TCP_CLIENT_RX_BUF_SIZE];
       volatile uint16_t rxBuffLen;
-      uint16_t rxBuffHead;
+      volatile uint16_t rxBuffHead;
       volatile uint16_t rxBuffTail;
       volatile uint16_t totLen;
       volatile uint8_t txBuff[TCP_CLIENT_TX_BUF_SIZE];
       volatile uint16_t txBuffLen;
       volatile uint16_t txBuffHead;
-      uint16_t txBuffTail;
+      volatile uint16_t txBuffTail;
    } TCP_CLIENT_T;
    
    typedef struct TCP_SERVER_T_ {

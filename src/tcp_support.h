@@ -79,6 +79,7 @@ static void tcpClientErr(void *arg, err_t err) {
 
 static err_t tcpSend(TCP_CLIENT_T *client) {
    err_t err = ERR_OK;
+   uint32_t ints;
    
    if( client->txBuffLen ) {
       uint16_t maxLen = tcp_sndbuf(client->pcb);
@@ -104,10 +105,11 @@ static err_t tcpSend(TCP_CLIENT_T *client) {
          tcp_output(client->pcb);
          if( err == ERR_OK ) {
             client->txBuffHead = tmpTxBuffHead;
+            ints = save_and_disable_interrupts();
             client->txBuffLen = tmpTxBuffLen;
+            restore_interrupts(ints);
 #ifndef NDEBUG
          } else {
-            gpio_put(TCP_WRITE_ERR, HIGH);
 //###            if( err != lastTcpWriteErr ) {
 //###               printf("TWE: %d\r\n", err);
 //###            }
@@ -137,7 +139,12 @@ static err_t tcpSent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
 static err_t tcpPoll(void *arg, struct tcp_pcb *tpcb) {
    TCP_CLIENT_T *client = (TCP_CLIENT_T *)arg;
    err_t err = ERR_OK;
+#ifndef NDEBUG
+   static bool pollState = false;   
    
+   gpio_put(POLL_STATE_LED, pollState);
+   pollState = !pollState;
+#endif
    if( !client->waitingForAck && client->txBuffLen ) {
       err = tcpSend(client);
    }
@@ -146,7 +153,7 @@ static err_t tcpPoll(void *arg, struct tcp_pcb *tpcb) {
 
 static err_t tcpRecv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
    TCP_CLIENT_T *client = (TCP_CLIENT_T *)arg;
-
+   
    if( !p ) {
       return tcpClientClose(client);
    }
@@ -298,6 +305,8 @@ bool tcpServerStart(TCP_SERVER_T *server, int portNum) {
 }
 
 uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
+   uint32_t ints;
+   
    if( client && client->pcb && client->pcb->callback_arg ) {
 
       if( client->txBuffLen + len > TCP_CLIENT_TX_BUF_SIZE && client->connected ) {
@@ -320,7 +329,9 @@ uint16_t tcpWriteBuf(TCP_CLIENT_T *client, const uint8_t *buf, uint16_t len) {
          if( client->txBuffTail == TCP_CLIENT_TX_BUF_SIZE ) {
             client->txBuffTail = 0;
          }
+         ints = save_and_disable_interrupts();
          ++client->txBuffLen;
+         restore_interrupts(ints);
       }
 #ifndef NDEBUG
       if( client->txBuffLen > maxTxBuffLen ) {
@@ -354,6 +365,7 @@ uint16_t tcpBytesAvailable(TCP_CLIENT_T *client) {
 int tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
    int c;
    uint32_t timeout = 0;
+   uint32_t ints;
    
    if( client ) {
       if( rqstTimeout > 0 ) {
@@ -365,7 +377,10 @@ int tcpReadByte(TCP_CLIENT_T *client, int rqstTimeout = -1) {
             if( client->rxBuffHead == TCP_CLIENT_RX_BUF_SIZE ) {
                client->rxBuffHead = 0;
             }
-            if( !--client->rxBuffLen && client->totLen && client->pcb) {
+            ints = save_and_disable_interrupts();
+            --client->rxBuffLen;
+            restore_interrupts(ints);
+            if( !client->rxBuffLen && client->totLen && client->pcb) {
                cyw43_arch_lwip_begin();
                tcp_recved(client->pcb, client->totLen);
                client->totLen = 0;
