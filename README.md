@@ -103,6 +103,10 @@ delivered in under a week? Who could say no?
 
 ## The Software
 
+| ![Builtin help](images/Builtin%20help.jpg "Builtin help") |
+|:--:|
+| Modem command list |
+
 The software is naturally quite similar to the original ESP8266 Wifi
 modem. There are a few changes (and one fairly major omission):
 
@@ -110,7 +114,6 @@ modem. There are a few changes (and one fairly major omission):
 * Escape sequence character definition (ATS2)
 * no OTA reprogramming (yet!)
 
-And 
 ### First time setup
 
 The default serial configuration is 9600bps, 8 data bits, no parity, 1
