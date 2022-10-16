@@ -103,7 +103,7 @@ delivered in under a week? Who could say no?
 
 ## The Software
 
-| ![Builtin help](images/Builtin%20help.jpg "Builtin help") |
+| ![Builtin help](images/Builtin%20help.png "Builtin help") |
 |:--:|
 | Modem command list |
 
