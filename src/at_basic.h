@@ -290,9 +290,6 @@ char *httpGet(char *atCmd) {
 // ATH go offline (if connected to a host)
 //
 char *hangup(char *atCmd) {
-   if( atCmd[0] ) {
-      ++atCmd;
-   }
    if( tcpIsConnected(tcpClient) ) {
       endCall();
    } else {
