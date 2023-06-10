@@ -84,7 +84,18 @@ proper Hammond red panel for the front (DigiKey part #
 *but* they're only available in 10 packs and their price is highway robbery.
 I ended up using a slightly smaller red panel (DigiKey part #
 [HM889-ND](https://www.digikey.com/en/products/detail/hammond-manufacturing/1593SIR10/409899))
-that was much cheaper and available in single units.
+that was ~much~ cheaper (it has recently increased in price by 500%)
+and available in single units.
+
+The labels are unbelievably low tech. I print them on a piece of inkjet
+transparency film. I then cut that down to size so that it will fit
+under the LED opening. Then I attach the trimmed down transparency piece
+to a length of matte finish, invisible tape and carefully position it in
+place. A bit of careful work with an x-acto knife and you've got
+yourself a label that looks like it's part of the panel. If you look
+closely at the front panel image you can see the edges of the
+transparency film and the tape, but in practice they both essentially
+disappear.
 
 ## The PCB
 
