@@ -568,7 +568,19 @@ void setupOTAupdates() {
 #endif
 
 void setHardwareFlow(bool state) {
+   if( state ) {
+      gpio_set_function(CTS, GPIO_FUNC_UART);
+      gpio_set_function(RTS, GPIO_FUNC_UART);
+   } else {
+      gpio_init(CTS);
+      gpio_init(RTS);
+      gpio_set_dir(CTS, OUTPUT);
+      gpio_put(CTS, ACTIVE);
+      gpio_set_dir(RTS, INPUT);
+   }
    uart_set_hw_flow(uart0, state, state);
+
+
 }
 
 // trim leading and trailing blanks from a string

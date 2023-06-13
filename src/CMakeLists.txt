@@ -1,16 +1,20 @@
+# Generated Cmake Pico project file
+
 cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Debug)
+set(PICO_BOARD pico_w)
+set(PICO_PLATFORM rp2040)
+set(PICO_COMPILER pico_arm_gcc)
+set(PROJECT_NAME wifi_modem)
+set(CYW43_HOST_NAME "PicoW2")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
-set(CMAKE_BUILD_TYPE Debug)
-set(PICO_BOARD pico_w)
-set(PROJECT_NAME wifi_modem)
 project(${PROJECT_NAME})
-set(CYW43_HOST_NAME "PicoW2")
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()

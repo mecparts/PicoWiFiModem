@@ -110,9 +110,6 @@ static err_t tcpSend(TCP_CLIENT_T *client) {
             restore_interrupts(ints);
 #ifndef NDEBUG
          } else {
-//###            if( err != lastTcpWriteErr ) {
-//###               printf("TWE: %d\r\n", err);
-//###            }
             lastTcpWriteErr = err;
 #endif
          }

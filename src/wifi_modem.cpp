@@ -56,10 +56,6 @@ void setup(void) {
 
    stdio_init_all();
 
-   gpio_set_function(CTS, GPIO_FUNC_UART);
-
-   gpio_set_function(RTS, GPIO_FUNC_UART);
-
    gpio_init(DTR);
    gpio_set_dir(DTR, INPUT);
 

@@ -438,6 +438,12 @@ char *showNetworkInfo(char *atCmd) {
       if( PagedOut(infoLine) ) break;
       snprintf(infoLine, sizeof infoLine, "SSID.......: %s", settings.ssid);
       if( PagedOut(infoLine) ) break;
+      if( wifiStatus == CYW43_LINK_JOIN ) {
+         int32_t rssi;
+         cyw43_ioctl(&cyw43_state, 254, sizeof rssi, (uint8_t *)&rssi, CYW43_ITF_STA);
+         snprintf(infoLine, sizeof infoLine, "RSSI.......: %d dBm", rssi);
+         if( PagedOut(infoLine) ) break;
+      }
       if( cyw43_wifi_get_mac(&cyw43_state, CYW43_ITF_STA, mac) != ERR_OK ) {
          if( PagedOut("MAC address: ?") ) break;
       } else {
