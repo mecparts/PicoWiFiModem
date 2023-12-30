@@ -15,8 +15,8 @@
   (fp_line (start -3.302 1.016) (end 3.302 1.016) (layer F.SilkS) (width 0.15))
   (fp_line (start 3.302 1.016) (end 3.302 0) (layer F.SilkS) (width 0.15))
   (fp_line (start -3.302 -0.508) (end -2.794 -1.016) (layer F.SilkS) (width 0.15))
-  (pad 1 thru_hole circle (at -3.81 0) (size 1.397 1.397) (drill 0.8128) (layers *.Cu *.Mask))
-  (pad 2 thru_hole circle (at 3.81 0) (size 1.397 1.397) (drill 0.8128) (layers *.Cu *.Mask))
+  (pad 1 thru_hole circle (at -3.81 0) (size 1.397 1.397) (drill 0.8) (layers *.Cu *.Mask))
+  (pad 2 thru_hole circle (at 3.81 0) (size 1.397 1.397) (drill 0.8) (layers *.Cu *.Mask))
   (model Discret.3dshapes/R3.wrl
     (at (xyz 0 0 0))
     (scale (xyz 0.3 0.3 0.3))

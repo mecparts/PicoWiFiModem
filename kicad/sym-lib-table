@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name Pico_Wifi_modem)(type Legacy)(uri ${KIPRJMOD}/library/Pico_Wifi_modem.lib)(options "")(descr ""))
+)

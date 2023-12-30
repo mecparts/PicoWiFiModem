@@ -1,4 +1,4 @@
-update=Thu 06 Oct 2022 01:27:42 PM MDT
+update=Thu 10 Nov 2022 03:22:54 PM MST
 version=1
 last_client=kicad
 [pcbnew]
@@ -28,5 +28,3 @@ version=1
 [eeschema]
 version=1
 LibDir=
-[eeschema/libraries]
-LibName1=library/Pico_Wifi_modem

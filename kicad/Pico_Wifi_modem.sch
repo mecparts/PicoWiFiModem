@@ -1,7 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:Pico_Wifi_modem
-LIBS:Pico_Wifi_modem-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 30 0
 EELAYER END
 $Descr USLetter 11000 8500
 encoding utf-8
@@ -16,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L CONN_02X05 P1
+L Pico_Wifi_modem:CONN_02X05 P1
 U 1 1 5E50B2EC
 P 1550 5200
 F 0 "P1" H 1550 5500 50  0000 C CNN
@@ -29,7 +27,7 @@ F 5 "0.40" H 1550 5200 60  0001 C CNN "Price"
 	-1   0    0    1   
 $EndComp
 $Comp
-L LED D3
+L Pico_Wifi_modem:LED D3
 U 1 1 5E50BCDD
 P 1450 2100
 F 0 "D3" H 1450 2200 50  0000 C CNN
@@ -42,7 +40,7 @@ F 5 "0.81" H 1450 2100 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D4
+L Pico_Wifi_modem:LED D4
 U 1 1 5E50BD48
 P 1450 2400
 F 0 "D4" H 1450 2500 50  0000 C CNN
@@ -55,7 +53,7 @@ F 5 "0.81" H 1450 2400 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D2
+L Pico_Wifi_modem:LED D2
 U 1 1 5E50BD80
 P 1450 1800
 F 0 "D2" H 1450 1900 50  0000 C CNN
@@ -68,7 +66,7 @@ F 5 "0.81" H 1450 1800 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D1
+L Pico_Wifi_modem:LED D1
 U 1 1 5E50BDC1
 P 1450 1500
 F 0 "D1" H 1450 1600 50  0000 C CNN
@@ -81,7 +79,7 @@ F 5 "0.81" H 1450 1500 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D5
+L Pico_Wifi_modem:LED D5
 U 1 1 5E50BE1F
 P 1450 2700
 F 0 "D5" H 1450 2800 50  0000 C CNN
@@ -94,7 +92,7 @@ F 5 "0.81" H 1450 2700 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D6
+L Pico_Wifi_modem:LED D6
 U 1 1 5E50BE68
 P 1450 3000
 F 0 "D6" H 1450 3100 50  0000 C CNN
@@ -107,7 +105,7 @@ F 5 "0.81" H 1450 3000 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D7
+L Pico_Wifi_modem:LED D7
 U 1 1 5E50BEAA
 P 1450 3300
 F 0 "D7" H 1450 3400 50  0000 C CNN
@@ -120,7 +118,7 @@ F 5 "0.81" H 1450 3300 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L LED D8
+L Pico_Wifi_modem:LED D8
 U 1 1 5E50BEEF
 P 1450 3600
 F 0 "D8" H 1450 3700 50  0000 C CNN
@@ -133,7 +131,7 @@ F 5 "0.81" H 1450 3600 60  0001 C CNN "Price"
 	-1   0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR01
+L Pico_Wifi_modem:+5V #PWR01
 U 1 1 5E50C40A
 P 1100 1300
 F 0 "#PWR01" H 1100 1150 50  0001 C CNN
@@ -144,7 +142,7 @@ F 3 "" H 1100 1300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR02
+L Pico_Wifi_modem:GND #PWR02
 U 1 1 5E510262
 P 3025 2875
 F 0 "#PWR02" H 3025 2625 50  0001 C CNN
@@ -155,7 +153,7 @@ F 3 "" H 3025 2875 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C1
+L Pico_Wifi_modem:C_Small C1
 U 1 1 5E5104FF
 P 2500 4050
 F 0 "C1" H 2510 4120 50  0000 L CNN
@@ -168,7 +166,7 @@ F 5 "0.37" H 2500 4050 60  0001 C CNN "Price"
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C6
+L Pico_Wifi_modem:C_Small C6
 U 1 1 5E5105D7
 P 4225 4200
 F 0 "C6" H 4235 4270 50  0000 L CNN
@@ -181,7 +179,7 @@ F 5 "0.34" H 4225 4200 60  0001 C CNN "Price"
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C2
+L Pico_Wifi_modem:C_Small C2
 U 1 1 5E51065C
 P 2350 4300
 F 0 "C2" V 2400 4350 50  0000 L CNN
@@ -194,7 +192,7 @@ F 5 "0.37" V 2350 4300 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L C_Small C3
+L Pico_Wifi_modem:C_Small C3
 U 1 1 5E5106EA
 P 4100 3875
 F 0 "C3" H 4225 4000 50  0000 L CNN
@@ -207,7 +205,7 @@ F 5 "0.37" V 4100 3875 60  0001 C CNN "Price"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR03
+L Pico_Wifi_modem:GND #PWR03
 U 1 1 5E510D98
 P 2250 4750
 F 0 "#PWR03" H 2250 4500 50  0001 C CNN
@@ -218,7 +216,7 @@ F 3 "" H 2250 4750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C5
+L Pico_Wifi_modem:C_Small C5
 U 1 1 5E511436
 P 3300 1300
 F 0 "C5" H 3310 1370 50  0000 L CNN
@@ -231,7 +229,7 @@ F 5 "0.37" H 3300 1300 60  0001 C CNN "Price"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR04
+L Pico_Wifi_modem:GND #PWR04
 U 1 1 5E5114B1
 P 3300 1500
 F 0 "#PWR04" H 3300 1250 50  0001 C CNN
@@ -242,7 +240,7 @@ F 3 "" H 3300 1500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR05
+L Pico_Wifi_modem:+5V #PWR05
 U 1 1 5E511510
 P 3300 1100
 F 0 "#PWR05" H 3300 950 50  0001 C CNN
@@ -253,7 +251,7 @@ F 3 "" H 3300 1100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C4
+L Pico_Wifi_modem:C_Small C4
 U 1 1 5E5119BD
 P 3250 3450
 F 0 "C4" H 3260 3520 50  0000 L CNN
@@ -266,7 +264,7 @@ F 5 "0.37" H 3250 3450 60  0001 C CNN "Price"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR06
+L Pico_Wifi_modem:GND #PWR06
 U 1 1 5E5119C3
 P 3250 3650
 F 0 "#PWR06" H 3250 3400 50  0001 C CNN
@@ -277,7 +275,7 @@ F 3 "" H 3250 3650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +3V3 #PWR07
+L Pico_Wifi_modem:+3V3 #PWR07
 U 1 1 5E511AB3
 P 3250 3250
 F 0 "#PWR07" H 3250 3100 50  0001 C CNN
@@ -288,7 +286,7 @@ F 3 "" H 3250 3250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR08
+L Pico_Wifi_modem:GND #PWR08
 U 1 1 5E5128D4
 P 7300 3300
 F 0 "#PWR08" H 7300 3050 50  0001 C CNN
@@ -299,7 +297,7 @@ F 3 "" H 7300 3300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR09
+L Pico_Wifi_modem:+5V #PWR09
 U 1 1 5E512A31
 P 6800 2600
 F 0 "#PWR09" H 6800 2450 50  0001 C CNN
@@ -310,7 +308,7 @@ F 3 "" H 6800 2600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +3V3 #PWR010
+L Pico_Wifi_modem:+3V3 #PWR010
 U 1 1 5E512B5E
 P 7800 2600
 F 0 "#PWR010" H 7800 2450 50  0001 C CNN
@@ -321,7 +319,7 @@ F 3 "" H 7800 2600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C_Small C7
+L Pico_Wifi_modem:C_Small C7
 U 1 1 5E51312D
 P 7800 3050
 F 0 "C7" H 7810 3120 50  0000 L CNN
@@ -334,7 +332,7 @@ F 5 "1.16" H 7800 3050 60  0001 C CNN "Price"
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR011
+L Pico_Wifi_modem:GND #PWR011
 U 1 1 5E5131EF
 P 7800 3300
 F 0 "#PWR011" H 7800 3050 50  0001 C CNN
@@ -345,7 +343,7 @@ F 3 "" H 7800 3300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR012
+L Pico_Wifi_modem:GND #PWR012
 U 1 1 5E5140A7
 P 3500 5800
 F 0 "#PWR012" H 3500 5550 50  0001 C CNN
@@ -356,7 +354,7 @@ F 3 "" H 3500 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG013
+L Pico_Wifi_modem:PWR_FLAG #FLG013
 U 1 1 5E51AA10
 P 7000 3300
 F 0 "#FLG013" H 7000 3395 50  0001 C CNN
@@ -391,7 +389,7 @@ TR
 Text Notes 1125 1500 0    60   ~ 0
 MR
 $Comp
-L +5V #PWR014
+L Pico_Wifi_modem:+5V #PWR014
 U 1 1 5E60C057
 P 3600 1550
 F 0 "#PWR014" H 3600 1400 50  0001 C CNN
@@ -402,7 +400,7 @@ F 3 "" H 3600 1550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR015
+L Pico_Wifi_modem:GND #PWR015
 U 1 1 5E60CB2A
 P 3600 3050
 F 0 "#PWR015" H 3600 2800 50  0001 C CNN
@@ -413,7 +411,7 @@ F 3 "" H 3600 3050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR016
+L Pico_Wifi_modem:GND #PWR016
 U 1 1 5E71271D
 P 6600 2300
 F 0 "#PWR016" H 6600 2050 50  0001 C CNN
@@ -424,7 +422,7 @@ F 3 "" H 6600 2300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L PWR_FLAG #FLG017
+L Pico_Wifi_modem:PWR_FLAG #FLG017
 U 1 1 5E712943
 P 6500 3000
 F 0 "#FLG017" H 6500 3095 50  0001 C CNN
@@ -435,7 +433,7 @@ F 3 "" H 6500 3000 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L BARREL_JACK CON1
+L Pico_Wifi_modem:BARREL_JACK CON1
 U 1 1 5E71A7E2
 P 7000 2000
 F 0 "CON1" H 7000 2250 50  0000 C CNN
@@ -449,7 +447,7 @@ F 5 "0.72" H 7000 2000 60  0001 C CNN "Price"
 $EndComp
 NoConn ~ 6700 2000
 $Comp
-L R_US R8
+L Pico_Wifi_modem:R_US R8
 U 1 1 5E880893
 P 1900 3600
 F 0 "R8" V 1980 3600 50  0000 C CNN
@@ -462,7 +460,7 @@ F 5 "0.16" V 1900 3600 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R7
+L Pico_Wifi_modem:R_US R7
 U 1 1 5E880A81
 P 1900 3300
 F 0 "R7" V 1980 3300 50  0000 C CNN
@@ -475,7 +473,7 @@ F 5 "0.16" V 1900 3300 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R6
+L Pico_Wifi_modem:R_US R6
 U 1 1 5E880BA6
 P 1900 3000
 F 0 "R6" V 1980 3000 50  0000 C CNN
@@ -488,7 +486,7 @@ F 5 "0.16" V 1900 3000 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R5
+L Pico_Wifi_modem:R_US R5
 U 1 1 5E880CB0
 P 1900 2700
 F 0 "R5" V 1980 2700 50  0000 C CNN
@@ -501,7 +499,7 @@ F 5 "0.16" V 1900 2700 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R4
+L Pico_Wifi_modem:R_US R4
 U 1 1 5E880E1F
 P 1900 2400
 F 0 "R4" V 1980 2400 50  0000 C CNN
@@ -514,7 +512,7 @@ F 5 "0.16" V 1900 2400 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R3
+L Pico_Wifi_modem:R_US R3
 U 1 1 5E880FF5
 P 1900 2100
 F 0 "R3" V 1980 2100 50  0000 C CNN
@@ -527,7 +525,7 @@ F 5 "0.16" V 1900 2100 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R2
+L Pico_Wifi_modem:R_US R2
 U 1 1 5E8810FD
 P 1900 1800
 F 0 "R2" V 1980 1800 50  0000 C CNN
@@ -540,7 +538,7 @@ F 5 "0.16" V 1900 1800 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L R_US R1
+L Pico_Wifi_modem:R_US R1
 U 1 1 5E881203
 P 1900 1500
 F 0 "R1" V 1980 1500 50  0000 C CNN
@@ -553,7 +551,7 @@ F 5 "0.16" V 1900 1500 60  0001 C CNN "Price"
 	0    1    1    0   
 $EndComp
 $Comp
-L Pico U3
+L Pico_Wifi_modem:Pico U3
 U 1 1 633C7D23
 P 7275 4975
 F 0 "U3" H 6725 6075 50  0000 C CNN
@@ -564,18 +562,7 @@ F 3 "" H 7275 4975 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LM2931AZ-3.3/5.0 U4
-U 1 1 633C9A5B
-P 7300 2850
-F 0 "U4" H 7300 3125 50  0000 C CNN
-F 1 "LM2950ACZ-3.3" H 7300 3050 50  0000 C CNN
-F 2 "modules:TO-92_Inline_Narrow_Oval" H 7300 2950 50  0001 C CIN
-F 3 "" H 7300 2850 50  0000 C CNN
-	1    7300 2850
-	1    0    0    -1  
-$EndComp
-$Comp
-L MAX3237CAI+ U1
+L Pico_Wifi_modem:MAX3237CAI+ U1
 U 1 1 633D1B87
 P 3500 4700
 F 0 "U1" H 3100 5550 60  0000 C CNN
@@ -611,7 +598,7 @@ DTR
 Text Notes 6425 4925 0    50   ~ 0
 RI
 $Comp
-L GND #PWR018
+L Pico_Wifi_modem:GND #PWR018
 U 1 1 633D6465
 P 6350 6100
 F 0 "#PWR018" H 6350 5850 50  0001 C CNN
@@ -622,7 +609,7 @@ F 3 "" H 6350 6100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR019
+L Pico_Wifi_modem:GND #PWR019
 U 1 1 633D6725
 P 8275 6025
 F 0 "#PWR019" H 8275 5775 50  0001 C CNN
@@ -633,7 +620,7 @@ F 3 "" H 8275 6025 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L D D12
+L Pico_Wifi_modem:D D12
 U 1 1 633D6D2D
 P 8200 4125
 F 0 "D12" H 8200 4325 50  0000 C CNN
@@ -644,7 +631,7 @@ F 3 "" H 8200 4125 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR020
+L Pico_Wifi_modem:+5V #PWR020
 U 1 1 633D6FF9
 P 8425 3925
 F 0 "#PWR020" H 8425 3775 50  0001 C CNN
@@ -675,7 +662,7 @@ NoConn ~ 6575 5625
 NoConn ~ 6575 5525
 NoConn ~ 6575 5425
 $Comp
-L 24LC32 U5
+L Pico_Wifi_modem:24LC32 U5
 U 1 1 633D7BEB
 P 9125 5825
 F 0 "U5" H 8875 6075 50  0000 C CNN
@@ -686,7 +673,7 @@ F 3 "" H 9125 5725 50  0000 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L R_US R13
+L Pico_Wifi_modem:R_US R13
 U 1 1 633D85B8
 P 8600 5475
 F 0 "R13" H 8700 5425 50  0000 C CNN
@@ -697,7 +684,7 @@ F 3 "" H 8600 5475 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R_US R12
+L Pico_Wifi_modem:R_US R12
 U 1 1 633D8815
 P 8350 5475
 F 0 "R12" H 8450 5425 50  0000 C CNN
@@ -708,7 +695,7 @@ F 3 "" H 8350 5475 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR021
+L Pico_Wifi_modem:GND #PWR021
 U 1 1 633D8AF5
 P 9125 6250
 F 0 "#PWR021" H 9125 6000 50  0001 C CNN
@@ -719,7 +706,7 @@ F 3 "" H 9125 6250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +3V3 #PWR022
+L Pico_Wifi_modem:+3V3 #PWR022
 U 1 1 633D8F4C
 P 8600 5175
 F 0 "#PWR022" H 8600 5025 50  0001 C CNN
@@ -730,7 +717,7 @@ F 3 "" H 8600 5175 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR023
+L Pico_Wifi_modem:GND #PWR023
 U 1 1 633DC477
 P 2875 5800
 F 0 "#PWR023" H 2875 5550 50  0001 C CNN
@@ -741,7 +728,7 @@ F 3 "" H 2875 5800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +3V3 #PWR024
+L Pico_Wifi_modem:+3V3 #PWR024
 U 1 1 633DCB0D
 P 2825 5400
 F 0 "#PWR024" H 2825 5250 50  0001 C CNN
@@ -753,7 +740,7 @@ F 3 "" H 2825 5400 50  0001 C CNN
 $EndComp
 NoConn ~ 4050 5400
 $Comp
-L GND #PWR025
+L Pico_Wifi_modem:GND #PWR025
 U 1 1 633DCE23
 P 4125 5575
 F 0 "#PWR025" H 4125 5325 50  0001 C CNN
@@ -765,7 +752,7 @@ F 3 "" H 4125 5575 50  0001 C CNN
 $EndComp
 NoConn ~ 7975 4625
 $Comp
-L 74LS245A U2
+L Pico_Wifi_modem:74LS245A U2
 U 1 1 633E0D72
 P 3600 2300
 F 0 "U2" H 3700 2875 50  0000 L BNN
@@ -776,7 +763,7 @@ F 3 "" H 3600 2300 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR026
+L Pico_Wifi_modem:+5V #PWR026
 U 1 1 633E42B2
 P 3025 2675
 F 0 "#PWR026" H 3025 2525 50  0001 C CNN
@@ -795,7 +782,7 @@ Wire Wire Line
 Wire Wire Line
 	5000 2000 4100 2000
 Wire Wire Line
-	4900 2100 4900 4500
+	4900 2100 4900 4025
 Wire Wire Line
 	6575 4025 4900 4025
 Wire Wire Line
@@ -805,31 +792,31 @@ Wire Wire Line
 Wire Wire Line
 	3025 2800 3025 2875
 Wire Wire Line
-	5400 1800 5400 5000
+	5400 1800 5400 4625
 Wire Wire Line
 	4100 1800 5400 1800
 Wire Wire Line
 	5500 1900 4100 1900
 Wire Wire Line
-	5500 1900 5500 5100
+	5500 1900 5500 4825
 Wire Wire Line
-	5000 2000 5000 4800
+	5000 2000 5000 4125
 Wire Wire Line
 	5600 2200 4100 2200
 Wire Wire Line
-	5600 2200 5600 5200
+	5600 2200 5600 4925
 Wire Wire Line
 	5300 2300 4100 2300
 Wire Wire Line
-	5300 2300 5300 4700
+	5300 2300 5300 4525
 Wire Wire Line
 	5200 2400 4100 2400
 Wire Wire Line
-	5200 2400 5200 4600
+	5200 2400 5200 4425
 Wire Wire Line
 	5100 2500 4100 2500
 Wire Wire Line
-	5100 2500 5100 4900
+	5100 2500 5100 4325
 Wire Wire Line
 	3100 2800 3025 2800
 Wire Wire Line
@@ -855,12 +842,12 @@ Wire Wire Line
 Wire Wire Line
 	9650 5725 9525 5725
 Wire Wire Line
-	9650 5725 9650 6175
+	9650 5725 9650 5825
 Connection ~ 8600 5275
 Wire Wire Line
-	8600 5175 8600 5375
+	8600 5175 8600 5275
 Wire Wire Line
-	8350 5275 9125 5275
+	8350 5275 8600 5275
 Wire Wire Line
 	8350 5375 8350 5275
 Connection ~ 9125 6175
@@ -869,9 +856,9 @@ Wire Wire Line
 Wire Wire Line
 	8675 6175 8675 5725
 Wire Wire Line
-	9650 6175 8675 6175
+	9650 6175 9125 6175
 Wire Wire Line
-	9125 6125 9125 6250
+	9125 6125 9125 6175
 Connection ~ 8600 5925
 Wire Wire Line
 	8600 5575 8600 5925
@@ -879,9 +866,9 @@ Connection ~ 8350 5825
 Wire Wire Line
 	8350 5575 8350 5825
 Wire Wire Line
-	7975 5925 8725 5925
+	7975 5925 8600 5925
 Wire Wire Line
-	7975 5825 8725 5825
+	7975 5825 8350 5825
 Wire Wire Line
 	8425 4125 8300 4125
 Wire Wire Line
@@ -903,7 +890,7 @@ Wire Wire Line
 Wire Wire Line
 	8275 5725 7975 5725
 Wire Wire Line
-	8275 4225 8275 6025
+	8275 4225 8275 4725
 Connection ~ 6350 4725
 Wire Wire Line
 	6350 4725 6575 4725
@@ -913,7 +900,7 @@ Wire Wire Line
 Wire Wire Line
 	6350 5225 6575 5225
 Wire Wire Line
-	6350 4225 6350 6100
+	6350 4225 6350 4725
 Connection ~ 5200 4425
 Connection ~ 5100 4325
 Connection ~ 5300 4525
@@ -1043,7 +1030,7 @@ Wire Wire Line
 	3600 1550 3600 1650
 Connection ~ 6800 2800
 Wire Wire Line
-	6500 1900 6500 3000
+	6500 1900 6500 2800
 Connection ~ 7300 3200
 Wire Wire Line
 	7000 3200 7300 3200
@@ -1052,25 +1039,25 @@ Wire Wire Line
 Wire Wire Line
 	7800 2800 7700 2800
 Wire Wire Line
-	6500 2800 6900 2800
+	6500 2800 6800 2800
 Wire Wire Line
 	3500 5800 3500 5700
 Connection ~ 7800 2800
 Wire Wire Line
 	7800 3300 7800 3150
 Wire Wire Line
-	7800 2600 7800 2950
+	7800 2600 7800 2800
 Wire Wire Line
 	6800 2800 6800 2600
 Wire Wire Line
-	7300 3100 7300 3300
+	7300 3100 7300 3200
 Connection ~ 3250 3300
 Wire Wire Line
-	3500 3300 3500 3900
+	3500 3300 3500 3700
 Wire Wire Line
 	3250 3300 3500 3300
 Wire Wire Line
-	3250 3250 3250 3350
+	3250 3250 3250 3300
 Wire Wire Line
 	3250 3550 3250 3650
 Wire Wire Line
@@ -1079,7 +1066,7 @@ Wire Wire Line
 	3300 1100 3300 1200
 Connection ~ 2250 4700
 Wire Wire Line
-	2250 4300 2250 4750
+	2250 4300 2250 4700
 Wire Wire Line
 	2000 4700 2250 4700
 Wire Wire Line
@@ -1180,7 +1167,90 @@ Wire Wire Line
 Wire Wire Line
 	1100 3600 1300 3600
 Wire Wire Line
-	1100 1300 1100 3600
+	1100 1300 1100 1500
 Wire Wire Line
 	2525 5200 1800 5200
+Wire Wire Line
+	4900 4025 4900 4500
+Wire Wire Line
+	9650 5925 9650 6175
+Wire Wire Line
+	9650 5825 9650 5925
+Wire Wire Line
+	8600 5275 8600 5375
+Wire Wire Line
+	8600 5275 9125 5275
+Wire Wire Line
+	9125 6175 8675 6175
+Wire Wire Line
+	9125 6175 9125 6250
+Wire Wire Line
+	8600 5925 8725 5925
+Wire Wire Line
+	8350 5825 8725 5825
+Wire Wire Line
+	6350 5725 6350 6100
+Wire Wire Line
+	8275 4725 8275 5225
+Wire Wire Line
+	8275 5225 8275 5725
+Wire Wire Line
+	8275 5725 8275 6025
+Wire Wire Line
+	6350 4725 6350 5225
+Wire Wire Line
+	6350 5225 6350 5725
+Wire Wire Line
+	5200 4425 5200 4600
+Wire Wire Line
+	5100 4325 5100 4900
+Wire Wire Line
+	5300 4525 5300 4700
+Wire Wire Line
+	5600 4925 5600 5200
+Wire Wire Line
+	5000 4125 5000 4800
+Wire Wire Line
+	5500 4825 5500 5100
+Wire Wire Line
+	5400 4625 5400 5000
+Wire Wire Line
+	3500 3700 3500 3900
+Wire Wire Line
+	6500 2800 6500 3000
+Wire Wire Line
+	6800 2800 6900 2800
+Wire Wire Line
+	7300 3200 7300 3300
+Wire Wire Line
+	7800 2800 7800 2950
+Wire Wire Line
+	3250 3300 3250 3350
+Wire Wire Line
+	2250 4700 2250 4750
+Wire Wire Line
+	1100 1500 1100 1800
+Wire Wire Line
+	1100 1800 1100 2100
+Wire Wire Line
+	1100 2100 1100 2400
+Wire Wire Line
+	1100 2400 1100 2700
+Wire Wire Line
+	1100 2700 1100 3000
+Wire Wire Line
+	1100 3000 1100 3300
+Wire Wire Line
+	1100 3300 1100 3600
+$Comp
+L Pico_Wifi_modem:LM2931AZ-3.3_5.0 U4
+U 1 1 636F569F
+P 7300 2850
+F 0 "U4" H 7300 3167 50  0000 C CNN
+F 1 "LM2931AZ-3.3_5.0" H 7300 3076 50  0000 C CNN
+F 2 "modules:TO-92_Inline_Narrow_Oval" H 7300 3075 50  0001 C CIN
+F 3 "" H 7300 2850 50  0000 C CNN
+	1    7300 2850
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
